@@ -1,0 +1,21 @@
+CREATE OR REPLACE TRIGGER CPI.GIEX_NEW_GROUP_TAX_TAIUX
+   AFTER INSERT OR UPDATE
+   ON CPI.GIEX_NEW_GROUP_TAX    FOR EACH ROW
+DECLARE
+BEGIN
+   IF UPDATING 
+   THEN
+      IF :new.tax_amt is null and :new.currency_tax_amt is not null
+      THEN
+        raise_application_error(-20001, 'Geniisys Exception#E#A suspected problem was encountered in Policy Number: '|| get_policy_no(:new.policy_id) ||', please report this message to your software provider.');
+      END IF;
+   ELSE
+      IF :new.tax_amt is null and :new.currency_tax_amt is not null
+      THEN        
+        raise_application_error(-20001, 'Geniisys Exception#E#A suspected problem was encountered in Policy Number: '|| get_policy_no(:new.policy_id) ||', please report this message to your software provider.');
+      END IF;
+   END IF; 
+END;
+/
+
+ENABLE TRIGGER CPI.GIEX_NEW_GROUP_TAX_TAIUX;

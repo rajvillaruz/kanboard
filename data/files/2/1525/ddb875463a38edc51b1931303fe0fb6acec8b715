@@ -1,0 +1,37 @@
+strInput = InputBox("Enter keyword to search: ")
+
+dim logfile, ForAppending, objFSO
+set objFSO = CreateObject("Scripting.FileSystemObject")
+strSearchFor = strInput
+objTempFile = "C:\Users\makoy\Desktop\php.csv" 'Temporary file
+
+	ShowSubfolders objFSO.GetFolder("C:\xampp\htdocs\srms\")
+
+ForAppending = 8
+	sub ShowSubFolders(folder)
+
+		for each objFile in folder.files
+
+			path = folder.Path & "\" & objFile.Name
+
+			'makoy
+			'Wscript.Echo Folder.Path & "\" & objFile.Name
+
+			
+				if objFSO.GetFile(path).size <> 0 then
+					if InStr(objFSO.OpenTextFile(path).ReadAll,strSearchFor) > 0 then
+
+						
+						msgbox path
+
+					else
+						WScript.Sleep (100)
+					end if
+				end if
+		next
+
+		for each Subfolder in folder.SubFolders
+			'ShowSubFolders Subfolder
+			ShowSubFolders objFSO.GetFolder(Subfolder)
+		next
+	end sub

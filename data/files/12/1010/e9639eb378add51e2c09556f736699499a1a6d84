@@ -1,0 +1,23 @@
+SET serveroutput ON
+
+DECLARE 
+  v_count NUMBER;
+BEGIN
+
+    SELECT COUNT(*)
+      INTO v_count
+      FROM user_tab_columns
+     WHERE UPPER(table_name) = 'GIAC_ASSUMED_RI_EXT'
+       AND UPPER(column_name) = 'PARAM_LINE_CD';
+       
+    IF v_count = 0 THEN   
+        dbms_output.put_line('Adding column PARAM_LINE_CD to table GIAC_ASSUMED_RI_EXT...');
+        EXECUTE IMMEDIATE 'ALTER TABLE giac_assumed_ri_ext add param_line_cd VARCHAR2(2)';
+        dbms_output.put_line('Column added.');
+    ELSE
+        DBMS_OUTPUT.PUT_LINE('PARAM_LINE_CD column already exist at GIAC_ASSUMED_RI_EXT table.');
+    END IF;
+EXCEPTION
+    WHEN OTHERS THEN
+        dbms_output.put_line('ERROR: '||sqlerrm);
+END;

@@ -1,0 +1,64 @@
+set serveroutput on;
+
+DECLARE
+    v_exists    NUMBER(1) := 0;
+BEGIN
+    FOR i IN (
+            SELECT DISTINCT 1 rec
+              FROM all_tables
+             WHERE owner = 'CPI'
+               AND table_name = 'GIAC_ALMA_EXT')
+    LOOP
+        v_exists := i.rec;
+    END LOOP;
+    
+    IF v_exists = 1 THEN
+        dbms_output.put_line('Table giac_alma_ext alreay exists.');
+    ELSE
+        EXECUTE IMMEDIATE ('CREATE TABLE CPI.GIAC_ALMA_EXT '||
+                            '( '||
+                              'SEQ_NO             NUMBER(12) NOT NULL, '||
+                              'BRANCH_CD          VARCHAR2(2), '||
+                              'TRAN_DATE          VARCHAR2 (8), '||
+                              'TRAN_TYPE          VARCHAR2 (5), '||
+                              'REF_NO             VARCHAR2 (20), '||
+                              'CLIENT_TYPE        VARCHAR2 (1), '||
+                              'LOCAL_AMT          NUMBER (18, 2), '||
+                              'FOREIGN_AMT        NUMBER (15, 2), '||
+                              'CURRENCY_SNAME     VARCHAR2 (3), '||
+                              'PAYOR_TYPE         VARCHAR2 (1), '||
+                              'CORPORATE_NAME     VARCHAR2 (90), '||
+                              'LAST_NAME          VARCHAR2 (30), '||
+                              'FIRST_NAME         VARCHAR2 (30), '||
+                              'MIDDLE_NAME        VARCHAR2 (30), '||
+                              'ADDRESS1           VARCHAR2 (30), '||
+                              'ADDRESS2           VARCHAR2 (30), '||
+                              'ADDRESS3           VARCHAR2 (30), '||
+                              'BIRTHDATE          VARCHAR2 (8), '||
+                              'USER_ID            VARCHAR2(8 BYTE) NOT NULL, '||
+                              'LAST_UPDATE        DATE NOT NULL '||
+                            ') '||
+                            'TABLESPACE ACCTG_DATA_MED '||
+                            'PCTUSED    0 '||
+                            'PCTFREE    10 '||
+                            'INITRANS   1 '||
+                            'MAXTRANS   255 '||
+                            'STORAGE    ( '||
+                                        'INITIAL          512K '||
+                                        'NEXT             512K '||
+                                        'MINEXTENTS       1 '||
+                                        'MAXEXTENTS       UNLIMITED '||
+                                        'PCTINCREASE      0 '||
+                                        'BUFFER_POOL      DEFAULT '||
+                                       ') '||
+                            'LOGGING '|| 
+                            'NOCOMPRESS '|| 
+                            'NOCACHE '||
+                            'NOPARALLEL '||
+                            'MONITORING');
+        EXECUTE IMMEDIATE ('ALTER TABLE CPI.GIAC_ALMA_EXT add CONSTRAINT alma_pk PRIMARY KEY (seq_no, user_id)');
+        
+        EXECUTE IMMEDIATE ('CREATE OR REPLACE PUBLIC SYNONYM GIAC_ALMA_EXT FOR CPI.GIAC_ALMA_EXT');
+        dbms_output.put_line('Created giac_alma_ext.');
+    END IF;
+END;

@@ -1,0 +1,151 @@
+CREATE OR REPLACE PACKAGE BODY CPI.gipir311_fgic_pkg
+AS
+/*
+**  Created by   :  Benjo Brito
+**  Date Created :  08.29.2014
+**  Description  :  GIPIR311 - Group Insurance Certificate - FGIC
+*/
+   FUNCTION gipir311 (
+      p_policy_id         gipi_polbasic.policy_id%TYPE,
+      p_item_no           gipi_grouped_items.item_no%TYPE,
+      p_grouped_item_no   VARCHAR2
+   )
+      RETURN gipir311_tab PIPELINED
+   IS
+      rep   gipir311_type;
+      str   gipir311_fgic_pkg.grp_item_array;
+   BEGIN
+      str := gipir311_fgic_pkg.grp_item_to_array (p_grouped_item_no, ',');
+
+      FOR h IN 1 .. str.COUNT
+      LOOP
+         FOR i IN (SELECT b.grouped_item_title enrollee_name,
+                          get_policy_no (a.policy_id) policy_no,
+                             b.item_no
+                          || '-'
+                          || LPAD (b.grouped_item_no, 5, 0) coc_no,
+                          NVL (b.from_date, a.eff_date) from_date,
+                          NVL (b.TO_DATE,
+                               DECODE (a.endt_seq_no,
+                                       0, a.expiry_date,
+                                       a.endt_expiry_date
+                                      )
+                              ) TO_DATE
+                     FROM gipi_polbasic a, gipi_grouped_items b
+                    WHERE b.policy_id = a.policy_id
+                      AND a.policy_id = p_policy_id
+                      AND b.item_no = p_item_no
+                      AND b.grouped_item_no = str (h))
+         LOOP
+            rep.enrollee_name := i.enrollee_name;
+            rep.policy_no := i.policy_no;
+            rep.coc_no := i.coc_no;
+            rep.eff_date :=
+                  TO_CHAR (i.from_date, 'fmMonth DD, YYYY')
+               || ' to '
+               || TO_CHAR (i.TO_DATE, 'fmMonth DD, YYYY');
+            rep.grouped_item_no := str (h);
+            PIPE ROW (rep);
+         END LOOP;
+      END LOOP;
+   END gipir311;
+
+   FUNCTION gipir311_benefits (
+      p_policy_id         gipi_polbasic.policy_id%TYPE,
+      p_item_no           gipi_grouped_items.item_no%TYPE,
+      p_grouped_item_no   VARCHAR2
+   )
+      RETURN gipir311_benefits_tab PIPELINED
+   IS
+      rep     gipir311_benefits_type;
+      v_cnt            NUMBER                 := 0;
+      v_cnt_item       NUMBER                 := 0;--VJ 08052015; FGIC 20055
+      v_cnt_grpitem    NUMBER                 := 0;--VJ 08052015; FGIC 20055
+   BEGIN
+      SELECT COUNT (*)
+        INTO v_cnt
+        FROM gipi_itmperil_grouped
+       WHERE policy_id = p_policy_id
+         AND item_no = p_item_no
+         AND grouped_item_no = p_grouped_item_no;
+         
+/*added by VJ 05 August 2015 
+**FGIC 20055
+**line 71 to 84*/         
+      SELECT nvl(no_of_persons,0)
+        INTO v_cnt_item
+        FROM gipi_accident_item
+       WHERE policy_id = p_policy_id
+         AND item_no = p_item_no;
+         
+      SELECT COUNT (*)
+        INTO v_cnt_grpitem
+        FROM gipi_grouped_items
+       WHERE policy_id = p_policy_id
+         AND item_no = p_item_no;         
+
+      IF v_cnt > 0
+      THEN
+         FOR i IN (SELECT b.peril_sname, a.tsi_amt
+                     FROM gipi_itmperil_grouped a, giis_peril b
+                    WHERE a.line_cd = b.line_cd
+                      AND a.peril_cd = b.peril_cd
+                      AND a.policy_id = p_policy_id
+                      AND a.item_no = p_item_no
+                      AND a.grouped_item_no = p_grouped_item_no)
+         LOOP
+            rep.peril_sname := i.peril_sname;
+            rep.tsi_amt := TO_CHAR (i.tsi_amt, 'fm999,999,999,990.00');
+            PIPE ROW (rep);
+         END LOOP;
+      ELSE
+         FOR i IN (SELECT b.peril_sname,
+                          ROUND (a.tsi_amt / (decode(v_cnt_item,0,v_cnt_grpitem,v_cnt_item)), 2)tsi_amt--VJ 08052015; FGIC 20055
+                     FROM gipi_itmperil a, giis_peril b,
+                          gipi_accident_item c
+                    WHERE a.line_cd = b.line_cd
+                      AND a.peril_cd = b.peril_cd
+                      AND a.policy_id = c.policy_id(+)
+                      AND a.item_no = c.item_no(+)
+                      AND a.policy_id = p_policy_id
+                      AND a.item_no = p_item_no)
+         LOOP
+            rep.peril_sname := i.peril_sname;
+            rep.tsi_amt := TO_CHAR (i.tsi_amt, 'fm999,999,999,990.00');
+            PIPE ROW (rep);
+         END LOOP;
+      END IF;
+   END gipir311_benefits;
+
+   FUNCTION grp_item_to_array (p_grp_item VARCHAR2, p_ref VARCHAR2)
+      RETURN grp_item_array
+   IS
+      i          NUMBER          := 0;
+      POSITION   NUMBER          := 0;
+      p_input    VARCHAR2 (5000) := p_grp_item;
+      output     grp_item_array;
+   BEGIN
+      POSITION := INSTR (p_input, p_ref, 1, 1);
+
+      IF POSITION = 0
+      THEN
+         output (1) := p_input;
+      END IF;
+
+      WHILE (POSITION != 0)
+      LOOP
+         i := i + 1;
+         output (i) := SUBSTR (p_input, 1, POSITION - 1);
+         p_input := SUBSTR (p_input, POSITION + 1, LENGTH (p_input));
+         POSITION := INSTR (p_input, p_ref, 1, 1);
+
+         IF POSITION = 0
+         THEN
+            output (i + 1) := p_input;
+         END IF;
+      END LOOP;
+
+      RETURN output;
+   END grp_item_to_array;
+END gipir311_fgic_pkg;
+/

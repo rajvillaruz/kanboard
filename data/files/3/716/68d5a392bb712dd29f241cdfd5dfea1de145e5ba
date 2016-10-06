@@ -1,0 +1,40 @@
+CREATE OR REPLACE PACKAGE CPI.gipir311_fgic_pkg
+AS
+   TYPE gipir311_type IS RECORD (
+      enrollee_name     gipi_grouped_items.grouped_item_title%TYPE,
+      policy_no         VARCHAR2 (100),
+      coc_no            VARCHAR2 (50),
+      eff_date          VARCHAR2 (200),
+      grouped_item_no   VARCHAR2 (5000)
+   );
+
+   TYPE gipir311_tab IS TABLE OF gipir311_type;
+
+   TYPE gipir311_benefits_type IS RECORD (
+      peril_sname   giis_peril.peril_sname%TYPE,
+      tsi_amt       VARCHAR2 (50)
+   );
+
+   TYPE gipir311_benefits_tab IS TABLE OF gipir311_benefits_type;
+
+   TYPE grp_item_array IS TABLE OF VARCHAR2 (5000)
+      INDEX BY BINARY_INTEGER;
+
+   FUNCTION gipir311 (
+      p_policy_id         gipi_polbasic.policy_id%TYPE,
+      p_item_no           gipi_grouped_items.item_no%TYPE,
+      p_grouped_item_no   VARCHAR2
+   )
+      RETURN gipir311_tab PIPELINED;
+
+   FUNCTION gipir311_benefits (
+      p_policy_id         gipi_polbasic.policy_id%TYPE,
+      p_item_no           gipi_grouped_items.item_no%TYPE,
+      p_grouped_item_no   VARCHAR2
+   )
+      RETURN gipir311_benefits_tab PIPELINED;
+
+   FUNCTION grp_item_to_array (p_grp_item VARCHAR2, p_ref VARCHAR2)
+      RETURN grp_item_array;
+END gipir311_fgic_pkg;
+/

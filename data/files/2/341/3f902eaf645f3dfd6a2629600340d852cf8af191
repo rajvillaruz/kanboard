@@ -1,0 +1,117 @@
+<form id="uwParParametersForm" name="uwParParametersForm">
+	<input type="hidden" name="globalParId" 		id="globalParId" 		value="959931"/>
+	<input type="hidden" name="globalPolFlag" 		id="globalPolFlag" 		value="1"/>
+	<input type="hidden" name="globalAssignSw" 		id="globalAssignSw" 	value="Y"/>
+	<input type="hidden" name="globalParStatus" 	id="globalParStatus" 	value="3"/>
+	<input type="hidden" name="globalParSeqNo" 		id="globalParSeqNo" 	value="22721"/>
+	<input type="hidden" name="globalAssdNo" 	    id="globalAssdNo" 		value="206827"/>
+	<input type="hidden" name="globalAssdName" 		id="globalAssdName" 	value="PEMALYN T. DIZON"/>
+	<input type="hidden" name="globalParYy" 	 	id="globalParYy" 		value="14"/>
+	<input type="hidden" name="globalParType"  		id="globalParType" 		value="E"/>
+	<input type="hidden" name="globalRemarks"  		id="globalRemarks" 		value=""/>
+	<input type="hidden" name="globalUnderwriter" 	id="globalUnderwriter" 	value="RJAY"/>
+	<input type="hidden" name="globalQuoteId" 		id="globalQuoteId" 		value=""/>
+	<input type="hidden" name="globalParNo" 		id="globalParNo" 		value="MC - XP - 14 - 022721 - 00"/>
+	<input type="hidden" name="globalPackParId" 	id="globalPackParId" 	value="0"/>
+	<input type="hidden" name="globalPackParNo" 	id="globalPackParNo" 	value=""/>
+	<input type="hidden" name="globalLineName" 		id="globalLineName" 	value="MOTOR CAR" />
+	<input type="hidden" name="globalLineCd" 		id="globalLineCd" 		value="MC" />
+	<input type="hidden" name="globalSublineCd" 	id="globalSublineCd" 	value="PC"/>
+	<input type="hidden" name="globalOpFlag" 		id="globalOpFlag" 		value="N"/>
+	<input type="hidden" name="globalIssCd" 		id="globalIssCd" 		value="XP"/>
+	<input type="hidden" name="globalQuoteSeqNo" 	id="globalQuoteSeqNo" 	value="0"/>
+	<input type="hidden" name="globalPackPolFlag" 	id="globalPackPolFlag" 	value="N"/>
+	<input type="hidden" name="globalRenewNo"		id="globalRenewNo"		value="0"/>
+	<input type="hidden" name="globalParSeqNoC"		id="globalParSeqNoC"	value="022721"/>
+	<input type="hidden" name="globalPolSeqNo"		id="globalPolSeqNo"	    value="271"/>
+	<input type="hidden" name="globalIssueYy"		id="globalIssueYy"	    value="14"/>
+	<input type="hidden" name="globalAddress1"		id="globalAddress1"	    value="WALING WALING STREET, MABINI
+, "/>
+	<input type="hidden" name="globalAddress2"		id="globalAddress2"	    value="PUERTO PRINCESA CITY, "/
+>
+	<input type="hidden" name="globalAddress3"		id="globalAddress3"	    value="PALAWAN 5300"/>
+	<input type="hidden" name="globalEndtPolicyId"		id="globalEndtPolicyId"	    value="887076"/>
+	<input type="hidden" name="globalEndtPolicyNo"		id="globalEndtPolicyNo"	    value="MC-PC-XP-14-0000271-00"
+/>
+	<input type="hidden" name="globalIssueDate"			id="globalIssueDate"		value="" />
+	<input type="hidden" name="globalExpiryDate"		id="globalExpiryDate"	    value="11-13-2015 12:00:00"
+/>
+	<input type="hidden" name="globalInceptDate"		id="globalInceptDate"		value="11-13-2014 12:00:00"/>
+
+	<input type="hidden" name="globalEffDate"			id="globalEffDate"	    	value="11-13-2014 12:01:00"/>
+	<input type="hidden" name="globalEndtExpiryDate"	id="globalEndtExpiryDate"	value="11-13-2015 12:00:00"
+/>
+	<input type="hidden" name="globalShortRtPercent"	id="globalShortRtPercent" 	value=""/>
+	<input type="hidden" name="globalProvPremPct"		id="globalProvPremPct"  	value=""/>
+	<input type="hidden" name="globalCompSw"			id="globalCompSw"  			value="N"/>
+	<input type="hidden" name="globalProvPremPct"		id="globalProvPremPct"  	value=""/>
+	<input type="hidden" name="globalProvPremTag"		id="globalProvPremTag"  	value="N"/>
+	<input type="hidden" name="globalProrateFlag"		id="globalProrateFlag"  	value="2"/>
+	<input type="hidden" name="globalWithTariffSw"		id="globalWithTariffSw"  	value="N"/>
+	<input type="hidden" name="globalLineMotor"			id="globalLineMotor"  		value="MC"/>
+	<input type="hidden" name="globalLineFire"			id="globalLineFire"  		value="FI"/>
+	<input type="hidden" name="globalCtplCd"			id="globalCtplCd" 			value="3"/>
+	<input type="hidden" name="globalBackEndt"			id="globalBackEndt" 		value="N"/>
+	<input type="hidden" name="globalEndtTax"			id="globalEndtTax"	 		value="N"/>
+	<input type="hidden" name="globalMenuLineCd"		id="globalMenuLineCd"	 	value=""/>
+	<input type="hidden" name="globalInvoiceTag"		id="globalInvoiceTag" 		value="0"/>
+	<input type="hidden" name="globalIssCdRI"			id="globalIssCdRI" 			value="RI"/>  
+</form>
+
+<script type="text/javaScript" defer="defer">
+	objUWParList = JSON.parse('{"endtTax":"N","parYy":14,"underwriter":"RJAY","address1":"WALING WALING
+ STREET, MABINI, ","withTariffSw":"N","polSeqNo":271,"renewNo":0,"effDate":"Thu Nov 13 12:01:00 CST 2014"
+,"address2":"PUERTO PRINCESA CITY, ","rowCount":null,"address3":"PALAWAN 5300","arcExtData":null,"cpiRecNo"
+:null,"endtPolicyNo":"MC-PC-XP-14-0000271-00","parStatus":3,"endtExpiryDate":"Fri Nov 13 12:00:00 CST
+ 2015","userId":null,"lineName":"MOTOR CAR","strLastUpdate":null,"menuLineCd":null,"lineMotor":"MC","strExpiryDate"
+:"11-13-2015","parSeqNo":22721,"parId":959931,"quoteId":null,"inceptDate":"Thu Nov 13 12:00:00 CST 2014"
+,"status":null,"parType":"E","packPolFlag":"N","oldParStatus":null,"assdNo":206827,"cpiBranchCd":null
+,"provPremPct":null,"isPack":null,"createUser":null,"loadTag":null,"endtPolicyId":887076,"parMessage"
+:null,"cnDatePrinted":null,"uploadNo":null,"rowNum":null,"lastUpdate":null,"sublineCd":"PC","shortRtPercent"
+:null,"remarks":null,"opFlag":"N","packParNo":null,"compSw":"N","assdName":"PEMALYN T. DIZON","regionCd"
+:null,"lineFire":"FI","binderExist":"N","distNo":null,"issueYy":14,"gipiWInvTaxExist":0,"createDate"
+:null,"parSeqNoC":"022721","discExists":"N","issCd":"XP","gipiWInvoiceExist":0,"ctplCd":3,"expiryDate"
+:"Fri Nov 13 12:00:00 CST 2015","prorateFlag":"2","packParId":null,"appUser":null,"backEndt":"N","bankRefNo"
+:null,"strInceptDate":"11-13-2014","polFlag":"1","parNo":"MC - XP - 14 - 022721 - 00","sublineName":null
+,"quoteSeqNo":0,"provPremTag":"N","assignSw":"Y","lineCd":"MC","inspNo":null}'.replace(/\\/g, '\\\\'
+));
+	objGIPIWPolbas = JSON.parse('{"takeupTerm":"ST","bancTypeDesc":null,"companyCd":null,"designation":null
+,"withTariffSw":"N","rowCount":null,"invoiceSw":"N","bancassuranceSw":"N","fleetPrintTag":"N","endtExpiryDate"
+:"Fri Nov 13 12:00:00 CST 2015","refOpenPolNo":null,"formattedEndtExpDate":"11-13-2015","strLastUpdate"
+:null,"backStat":null,"riskTag":null,"acctOfCdSw":"N","annPremAmt":"19259","formattedEndtExpiryDate"
+:"11-13-2015","provPremPct":null,"endtIssCd":"XP","employeeCd":null,"msgAlert":null,"endtExpiryTag":null
+,"premWarrTag":"N","lastUpdate":null,"sublineCd":"PC","dspAssdName":"PEMALYN T. DIZON","issueYy":14,"mortgName"
+:null,"createDate":null,"surveyAgentCd":null,"issCd":"XP","settlingAgentName":null,"endtYy":"14","managerCd"
+:null,"packParId":null,"formattedExpiryDate":"11-13-2015 12:00:00","polFlag":"1","areaDesc":null,"validateTag"
+:null,"credBranch":"XP","covernotePrintedSw":"N","oldAssdNo":206827,"lineCd":"MC","cancelType":null,"address1"
+:"WALING WALING STREET, MABINI, ","renewNo":"0","address2":"PUERTO PRINCESA CITY, ","effDate":"Thu Nov
+ 13 12:01:00 CST 2014","polSeqNo":271,"samePolnoSw":"N","address3":"PALAWAN 5300","settlingAgentCd":null
+,"surchargeSw":null,"branchCd":null,"planCd":null,"userId":null,"parId":959931,"placeCd":null,"inceptDate"
+:"Thu Nov 13 12:00:00 CST 2014","labelTag":null,"regPolicySw":"Y","expiryTag":"N","packPolFlag":"N","assdNo"
+:"206827","oldAddress1":"WALING WALING STREET, MABINI, ","oldAddress2":"PUERTO PRINCESA CITY, ","oldAddress3"
+:"PALAWAN 5300","createUser":null,"refPolNo":"PRC103181 / PRC103182","cancelledEndtId":null,"planSw"
+:null,"foreignAccSw":"N","quotationPrintedSw":"N","areaCd":null,"manualRenewNo":"0","updateIssueDate"
+:null,"rowNum":null,"annTsiAmt":"1149500","surveyAgentName":null,"shortRtPercent":null,"acctOfCd":null
+,"compSw":"N","payeeName":null,"formattedInceptDate":"11-13-2014 12:00:00","bookingYear":"2014","regionCd"
+:"99","autoRenewFlag":"N","bancTypeCd":null,"tsiAmt":null,"bondSeqNo":null,"planChTag":null,"premAmt"
+:null,"expiryDate":"Fri Nov 13 12:00:00 CST 2015","branchDesc":null,"bookingMth":"NOVEMBER","issueDate"
+:"Wed Nov 12 16:22:12 CST 2014","industryCd":"19","prorateFlag":"2","formattedEffDate":"11-13-2014","appUser"
+:null,"bankRefNo":null,"endtSeqNo":null,"acctOfName":null,"premWarrDays":null,"inceptTag":"N","coInsuranceSw"
+:"1","discountSw":null,"typeCd":"134","provPremTag":"N"}'.replace(/\\/g, '\\\\'));
+	objUWGlobal.isExistGipiWInvoice = ('0'); // "1" if exist else "0" gipi_winvoice_pkg.get_gipi_winvoice_exist2
+
+	/*	if(nvl('', null) != null) {
+		objGIRIWInPolbas = JSON.parse(''.replace(/\\/g, '\\\\'));
+	}*/
+	// Added by		: mark jm 12.21.2010
+	// Description	: update the date columns of gipi_wpolbas (apply the date format)	
+	if(objGIPIWPolbas != null){
+		formatGIPIWPolbasDateColumns();
+	}
+	objUWGlobal.enablePost = 'N'; // by bonok :: 08.29.2012 para pag may laman na ung gipi_wcomm_invoices
+ saka mag eenable ung Post. 'Y' = enable 'N' = disable
+	objUWGlobal.enableDist = ''; // by bonok :: 08.30.2012
+	setParMenus(objUWParList.parStatus, objUWParList.lineCd, objUWParList.sublineCd, objUWParList.opFlag
+, objUWParList.issCd); // andrew - 03.02.2011 - added this function call to set par menus when updateParParameters
+ function is called
+</script>

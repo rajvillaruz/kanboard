@@ -1,0 +1,10 @@
+BEGIN
+UPDATE GIEX_EXPIRY
+   SET POST_FLAG = 'N'
+ WHERE POLICY_ID = 811600;
+ COMMIT;
+ update gipi_polbasic
+   set pol_flag = 1
+ where policy_id = 811600;
+ COMMIT;   
+END;
