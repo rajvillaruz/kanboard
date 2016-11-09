@@ -12,6 +12,7 @@
         <tr>
             <th><?= t('Column title') ?></th>
             <th><?= t('Task limit') ?></th>
+            <th><?= t('Task Is Closable') ?></th>
             <th><?= t('Actions') ?></th>
         </tr>
         <?php foreach ($columns as $column): ?>
@@ -24,6 +25,7 @@
             <?php endif ?>
             </td>
             <td class="column-10"><?= $this->e($column['task_limit']) ?></td>
+            <td class="column-10"><?= $this->e($column['is_task_closable']) ?></td>
             <td class="column-30">
                 <ul>
                     <li>
@@ -62,6 +64,8 @@
 
     <?= $this->form->label(t('Task limit'), 'task_limit') ?>
     <?= $this->form->number('task_limit', $values, $errors) ?>
+
+    <?= $this->form->checkbox('is_task_closable', t('Tasks are closable in this column'), 1, $project['is_task_closable'] == 1) ?>
 
     <?= $this->form->label(t('Description'), 'description') ?>
 

@@ -1,14 +1,5 @@
-
-		<script>
-			$(document).ready(function(){
-				$('#cost').change( function() {
-					$('#costcntr').val(this.value);
-				})
-			});
-		</script>
-
 <div class="page-header">
-    <h2><?= t('Edit a task') ?></h2>
+    <h2><?= t('Edit a Task') ?></h2>
 </div>
 <section id="task-section">
 <form method="post" action="<?= $this->url->href('taskmodification', 'update', array('task_id' => $task['id'], 'project_id' => $task['project_id'], 'ajax' => $ajax)) ?>" autocomplete="off">
@@ -56,62 +47,63 @@
 
         <?= $this->form->label(t('Complexity'), 'score') ?>
         <?= $this->form->number('score', $values, $errors, array('tabindex="6"')) ?><br/>
-        
+
         <?= $this->form->label(t('Due Date'), 'date_due') ?>
         <?= $this->form->text('date_due', $values, $errors, array('placeholder="'.$this->text->in($date_format, $date_formats).'"', 'tabindex="7"'), 'form-date') ?><br/>
         <div class="form-help"><?= t('Others formats accepted: %s and %s', date('Y-m-d'), date('Y_m_d')) ?></div>
-        
-         <?php 
-         	$cost_list = array('Unassigned' => 'Unassigned', 
-								'Maintenance' => 'Maintenance', 
+
+         <?php
+         	$cost_list = array('Unassigned' => 'Unassigned',
+								'Maintenance' => 'Maintenance',
         						'Development' => 'Development',
 								'Enhancement' => 'Enhancement',
 								'Implementation' => 'Implementation',
 								'Others' => 'Others');
-			
+
 			$activity_list[''] = array('Unassigned' => 'Unassigned');
 			$activity_list['Unassigned'] = array('Unassigned' => 'Unassigned');
-			
+
 			$activity_list['Maintenance'] = array('Bug Fixing' => 'Bug Fixing',
-											  'Consultations' => 'Consultations');
-											  
+											  'Consultation' => 'Consultation');
+
 			$activity_list['Development'] = array('Internal SR' => 'Internal SR',
 											  'Industry Enhancement' => 'Industry Enhancement');
-											  
+
 			$activity_list['Enhancement'] = array('Specific Enhancement' => 'Specific Enhancement');
-											  
+
 			$activity_list['Implementation'] = array('Configurable Document' => 'Configurable Document',
 											  'GAP Analysis' => 'GAP Analysis',
-											  'Regression' => 'Regression',
+                                              'Regression' => 'Regression',
 											  'SIT' => 'SIT',
-											  'UAT' => 'UAT',
-											  'UT' => 'UT');
-											  
+											  'UT' => 'UT',
+											  'UAT' => 'UAT');
+
 			$activity_list['Others'] = array('Meetings' => 'Meetings',
 										 'Trainings' => 'Trainings',
 										 'Tech Sessions' => 'Tech Sessions');
-							
+
 			$client_list = array('Unassigned' => 'Unassigned',
-								'UCPB' => 'UCPB',
-								'FGIC' => 'FGIC',
-								'PHILFIRE' => 'PHILFIRE',
-								'RSIC' => 'RSIC',
-								'MAC' => 'MAC',
-								'AUI' => 'AUI',
-								'CIC/PNG' => 'CIC/PNG',
-								'PNBGEN' => 'PNBGEN',
-								'FLT PRIME' => 'FLT PRIME',
-								'CPAIC' => 'CPAIC',
-								'TPISC' => 'TPISC',
-								'NIA' => 'NIA',
-								'AFPGEN' => 'AFPGEN',
-								'PFIC' => 'PFIC',
-								'ALL' => 'ALL');
-		
+                                'ALL' => 'ALL',
+                                'AFPGEN' => 'AFPGEN',
+                                'AUI' => 'AUI',
+                                'CIC/PNG' => 'CIC/PNG',
+                                'CPAIC' => 'CPAIC',
+                                'FGIC' => 'FGIC',
+                                'FLT PRIME' => 'FLT PRIME',
+                                'MAC' => 'MAC',
+                                'NIA' => 'NIA',
+                                'PFIC' => 'PFIC',
+                                'PHILFIRE' => 'PHILFIRE',
+                                'PNBGEN' => 'PNBGEN',
+                                'RSIC' => 'RSIC',
+                                'TPISC' => 'TPISC',
+								'UCPB' => 'UCPB'
+								);
+
 			function enhancement($post)
 			{
 				$conn = new mysqli(DB_HOSTNAME, DB_USERNAME, DB_PASSWORD, DB_NAME);
-		
+
 				$sql = "
 					SELECT
 						cost, activity, client
@@ -123,20 +115,20 @@
 
 				$result = $conn->query($sql);
 				$info = $result->fetch_assoc();
-				
+
 				return $info;
 			}
-			
+
 			$info = enhancement($values);
 			$values = array_merge($values, $info);
 		?>
-        
+
 		<?= $this->form->label(t('Cost Center'), 'cost') ?>
 		<div id='cost'><?= $this->form->select('cost', $cost_list, $values, $errors, array('tabindex="4"')) ?> <br/></div>
+
 		<?= $this->form->label(t('Activity'), 'activity') ?>
-		<input type="text" id="costcntr">
-        <div id='activity'><?= $this->form->select('activity', $activity_list[$values['cost']], $values, $errors, array('tabindex="4"')) ?> <br/></div>
-        
+        <div id='activity'><?= $this->form->select('activity', $activity_list[$values['cost']], $values, $errors, array('tabindex="6"')) ?> <br/></div>
+
         <?= $this->form->label(t('Client'), 'client') ?>
         <div id='client'><?= $this->form->select('client', $client_list, $values, $errors, array('tabindex="4"')) ?> <br/></div>
     </div>
@@ -152,4 +144,3 @@
     </div>
 </form>
 </section>
-

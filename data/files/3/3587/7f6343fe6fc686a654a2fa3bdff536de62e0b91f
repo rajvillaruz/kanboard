@@ -1,0 +1,11 @@
+CREATE OR REPLACE TRIGGER "CPI".winvoice_tbiuxx
+   BEFORE INSERT OR UPDATE
+ON gipi_winvoice
+FOR EACH ROW
+
+BEGIN
+  IF :NEW.item_grp IS NULL THEN
+     :NEW.item_grp := 1;
+  END IF;
+END;
+/

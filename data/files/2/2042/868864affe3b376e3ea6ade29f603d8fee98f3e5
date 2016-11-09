@@ -1,0 +1,55 @@
+CREATE OR REPLACE PACKAGE CPI.GIPIR311_AFPGEN_PKG AS
+/******************************************************************************
+   NAME:       GIPIR311_AFP_PKG
+   PURPOSE:    Grouped Insurance Confirmation
+
+   REVISIONS:
+   Ver        Date        Author           Description
+   ---------  ----------  ---------------  ------------------------------------
+   1.0        09/11/2013  Samuel Boquero   Created
+   1.1        11/18/2014  Mark Paragas     Added Currency Short Name in get_peril_details.
+******************************************************************************/
+
+    TYPE gipir311_type IS RECORD (
+        report_id       giis_reports.report_id%TYPE,
+        iss_cd          gipi_quote.iss_cd%TYPE,
+        logo            giis_parameters.param_value_v%TYPE,
+        company         giis_parameters.param_value_v%TYPE,
+        address         giis_parameters.param_value_v%TYPE,
+        tel_no          giis_issource.tel_no%TYPE,
+        fax_no          giis_issource.branch_fax_no%TYPE,
+        email           giis_issource.branch_website%TYPE,
+        policy_no       VARCHAR2(50),
+        enrollee_no     gipi_grouped_items.grouped_item_no%TYPE,
+        enrollee_name   gipi_grouped_items.grouped_item_title%TYPE,
+        eff_date        VARCHAR2(50),
+        expiry_date     VARCHAR2(50),
+        day_printed     VARCHAR2(10), 
+        month_year      VARCHAR2(50)
+   );
+
+   TYPE signatory_type IS RECORD (
+        signatory            giis_signatory_names.signatory%TYPE,
+        designation          giis_signatory_names.designation%TYPE,
+        file_name            giis_signatory_names.file_name%TYPE
+   );
+
+  TYPE peril_type IS RECORD (
+        currency        giis_currency.short_name%TYPE,
+        tsi_amt         VARCHAR2(500)
+   );
+
+
+  TYPE gipir311_tab IS TABLE OF gipir311_type;
+  TYPE signatory_tab IS TABLE OF signatory_type;
+  TYPE peril_tab IS TABLE OF peril_type;
+
+  FUNCTION get_gipir311_details (p_policy_id          GIPI_POLBASIC.policy_id%TYPE,
+                                 p_item_no            GIPI_GROUPED_ITEMS.item_no%TYPE,
+                                 p_grouped_item_no    GIPI_GROUPED_ITEMS.grouped_item_no%TYPE)RETURN gipir311_tab PIPELINED;
+  FUNCTION get_signatory_details(p_policy_id gipi_polbasic.policy_id%TYPE) RETURN signatory_tab PIPELINED;
+  FUNCTION get_peril_details (p_policy_id        GIPI_POLBASIC.policy_id%TYPE,
+                             p_item_no          gipi_itmperil_grouped.item_no%TYPE,
+                             p_grouped_item_no  gipi_itmperil_grouped.grouped_item_no%TYPE) RETURN peril_tab PIPELINED;
+END;
+/

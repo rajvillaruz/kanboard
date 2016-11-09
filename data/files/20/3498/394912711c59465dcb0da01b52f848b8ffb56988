@@ -1,0 +1,47 @@
+SET SERVEROUTPUT ON
+
+DECLARE
+   v_fnl_binder_id   giri_frps_ri.fnl_binder_id%TYPE;
+   v_ri_comm_vat     giri_frperil.ri_comm_vat%TYPE;
+   v_peril_seq_no    giri_frps_peril_grp.peril_seq_no%TYPE;
+   v_count           NUMBER := 0;
+BEGIN
+   FOR i
+      IN (SELECT fnl_binder_id, a.ri_comm_vat, c.peril_seq_no
+            FROM giri_frperil a, giri_frps_ri b, giri_frps_peril_grp c
+           WHERE     a.line_cd = b.line_cd
+                 AND a.frps_yy = b.frps_yy
+                 AND a.frps_seq_no = b.frps_seq_no
+                 AND a.ri_cd = b.ri_cd
+                 AND a.ri_seq_no = b.ri_seq_no
+                 AND a.line_cd = c.line_cd
+                 AND a.frps_yy = c.frps_yy
+                 AND a.frps_seq_no = c.frps_seq_no
+                 AND a.peril_cd = c.peril_cd
+                 AND b.fnl_binder_id = 41158)
+   LOOP
+      v_fnl_binder_id := i.fnl_binder_id;
+      v_ri_comm_vat := i.ri_comm_vat;
+      v_peril_seq_no := i.peril_seq_no;
+
+      BEGIN
+         UPDATE GIRI_BINDER_PERIL
+            SET ri_comm_vat = v_ri_comm_vat
+          WHERE     fnl_binder_id = v_fnl_binder_id
+                AND peril_seq_no = v_peril_seq_no;
+          COMMIT;
+      EXCEPTION
+         WHEN NO_DATA_FOUND
+         THEN
+            DBMS_OUTPUT.PUT_LINE ('NO record updated');
+      END;
+
+      v_count := v_count + 1;
+
+      DBMS_OUTPUT.PUT_LINE ('RECORDS UPDATED: ' || v_count);
+      DBMS_OUTPUT.PUT_LINE ('FNL_BINDER_ID: ' || v_fnl_binder_id);
+      DBMS_OUTPUT.PUT_LINE ('COMM_VAT: ' || v_ri_comm_vat);
+      DBMS_OUTPUT.PUT_LINE ('PERIL_SEQ_NO: ' || v_peril_seq_no);
+      DBMS_OUTPUT.PUT_LINE ('========================');
+   END LOOP;
+END;

@@ -7,12 +7,10 @@
         ) ?>
 </p>
 <p class="activity-description">
-<? if($task['title']!=null){ ?>
     <em><?= $this->e($task['title']) ?></em>
     <?php if (isset($changes)): ?>
         <div class="activity-changes">
             <?= $this->render('task/changes', array('changes' => $changes, 'task' => $task)) ?>
         </div>
     <?php endif ?>
-<? endif ?>
 </p>

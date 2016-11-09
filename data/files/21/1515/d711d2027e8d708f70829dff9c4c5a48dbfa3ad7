@@ -1,0 +1,142 @@
+--recon TB per SL
+
+1. Query used in extraction of TB per SL
+ 
+  SELECT gl_acct_id,
+         gl_acct_name,
+         SUM (debit) debit,
+         SUM (credit) credit
+    FROM (  SELECT c.gl_acct_id,
+                   c.gl_acct_category,
+                   c.gl_control_acct,
+                   c.gl_sub_acct_1,
+                   c.gl_sub_acct_2,
+                   c.gl_sub_acct_3,
+                   c.gl_sub_acct_4,
+                   c.gl_sub_acct_5,
+                   c.gl_sub_acct_6,
+                   c.gl_sub_acct_7,
+                   a.gl_acct_name,
+                   a.gl_acct_sname,
+                   NVL (c.sl_type_cd, a.gslt_sl_type_cd),
+                   c.sl_cd,
+                   d.sl_name,
+                   b.tran_month,
+                   b.tran_year,
+                   SUM (NVL (c.debit_amt, 0)) debit,
+                   SUM (NVL (c.credit_amt, 0)) credit
+              FROM GIAC_ACCTRANS b,
+                   GIAC_ACCT_ENTRIES c,
+                   GIAC_CHART_OF_ACCTS a,
+                   GIAC_SL_LISTS d
+             WHERE     a.gl_acct_id = c.gl_acct_id
+                   AND tran_id >= 0
+                   AND b.tran_id = c.gacc_tran_id
+                   AND c.sl_cd IS NOT NULL
+                   AND TO_NUMBER (TO_CHAR (b.posting_date, 'YYYYMM')) =
+                          :p_tran_year * 100 + :p_tran_mm --enter 12-2014 and 01-2015
+                   AND NVL (c.sl_type_cd, a.gslt_sl_type_cd) = d.sl_type_cd
+                   AND c.sl_cd = d.sl_cd
+                   AND NVL (c.sl_source_cd, 1) <> 2
+                   AND B.TRAN_FLAG = 'P'
+          GROUP BY c.gl_acct_id,
+                   c.gl_acct_category,
+                   c.gl_control_acct,
+                   c.gl_sub_acct_1,
+                   c.gl_sub_acct_2,
+                   c.gl_sub_acct_3,
+                   c.gl_sub_acct_4,
+                   c.gl_sub_acct_5,
+                   c.gl_sub_acct_6,
+                   c.gl_sub_acct_7,
+                   a.gl_acct_name,
+                   a.gl_acct_sname,
+                   NVL (c.sl_type_cd, a.gslt_sl_type_cd),
+                   c.sl_cd,
+                   d.sl_name,
+                   b.tran_month,
+                   b.tran_year
+          UNION ALL
+            SELECT c.gl_acct_id,
+                   c.gl_acct_category,
+                   c.gl_control_acct,
+                   c.gl_sub_acct_1,
+                   c.gl_sub_acct_2,
+                   c.gl_sub_acct_3,
+                   c.gl_sub_acct_4,
+                   c.gl_sub_acct_5,
+                   c.gl_sub_acct_6,
+                   c.gl_sub_acct_7,
+                   a.gl_acct_name,
+                   a.gl_acct_sname,
+                   NULL,
+                   NULL,
+                   NULL,
+                   b.tran_month,
+                   b.tran_year,
+                   SUM (NVL (c.debit_amt, 0)) debit,
+                   SUM (NVL (c.credit_amt, 0)) credit
+              FROM GIAC_ACCTRANS b, GIAC_ACCT_ENTRIES c, GIAC_CHART_OF_ACCTS a
+             WHERE     a.gl_acct_id = c.gl_acct_id
+                   AND tran_id >= 0
+                   AND b.tran_id = c.gacc_tran_id
+                   AND c.sl_cd IS NULL
+                   AND TO_NUMBER (TO_CHAR (b.posting_date, 'YYYYMM')) =
+                          :p_tran_year * 100 + :p_tran_mm --enter 12-2014 and 01-2015
+                   AND NVL (c.sl_source_cd, 1) <> 2
+                   AND B.TRAN_FLAG = 'P'
+          GROUP BY c.gl_acct_id,
+                   c.gl_acct_category,
+                   c.gl_control_acct,
+                   c.gl_sub_acct_1,
+                   c.gl_sub_acct_2,
+                   c.gl_sub_acct_3,
+                   c.gl_sub_acct_4,
+                   c.gl_sub_acct_5,
+                   c.gl_sub_acct_6,
+                   c.gl_sub_acct_7,
+                   a.gl_acct_name,
+                   a.gl_acct_sname,
+                   NULL,
+                   NULL,
+                   NULL,
+                   b.tran_month,
+                   b.tran_year)
+GROUP BY gl_acct_id, gl_acct_name
+ORDER BY 2;
+
+2. Query to select all GLs included in TB 
+
+  SELECT gl_acct_id,
+         get_gl_acct_name (gl_acct_id) gl_acct_name,
+         SUM (debit_amt) debit,
+         SUM (credit_amt) credit
+    FROM giac_acct_entries a, giac_acctrans b
+   WHERE     gacc_tran_id = tran_id
+         AND tran_flag = 'P'
+         AND TO_NUMBER (TO_CHAR (b.posting_date, 'YYYYMM')) =
+                :p_tran_year * 100 + :p_tran_mm    --enter 12-2014 and 01-2015
+GROUP BY gl_acct_id
+ORDER BY 2;
+
+3. Compare results of both select per GL. If discrepancies exists proceed to step 4.
+
+4. Modify both queries, add tran_id, generation_type, sl_cd and sl_type_cd in select and add condition to query specific GL from step 3. This will check the transactions that causes the discrepancies.
+
+5. If sl_cd is not null then check the SL_TYPE_CD from GIAC_CHART_OF_ACCTS.
+  
+    SELECT gslt_sl_type_cd, a.*
+      FROM giac_chart_of_accts a
+     WHERE gl_acct_id = :gl_acct_id;
+     
+   If gslt_sl_type_cd is null then proceed to step 8.    
+     
+6. Check if SL_CD of GL is existing in giac_sl_lists.
+
+    SELECT *
+      FROM giac_sl_lists
+     WHERE sl_type_cd = :sl_type_cd;
+     
+7. If sl_cd does not exist in giac_sl_lists, it is a system error. Ask the client on the correct SL and update the record. Note: backup the records before updating.
+
+8. If generation_type is 'X' (manual entries), it is a system error. Update the record, no sl_cd should be generated. Note: backup the records before updating.

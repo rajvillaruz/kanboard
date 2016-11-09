@@ -1,0 +1,41 @@
+SELECT trty_cd, trty_name, trty_yy, a.line_cd, a.share_cd, a.share_type,
+       a.eff_date, a.expiry_date
+  FROM giis_dist_share a, gipi_polbasic b
+ WHERE TRUNC (a.expiry_date) >=
+          TRUNC(DECODE (NVL (prtfolio_sw, 'N'),
+                  'N', b.incept_date,
+                  'P', TO_CHAR (:b2502.eff_date, 'DD-MON-YYYY')
+                 )) /*trunc function added by aldren 06102014*/
+/*start of addition by aldren 02272014*/
+   AND TRUNC (a.eff_date) <=
+        TRUNC(  DECODE (NVL (prtfolio_sw, 'N'),
+                  'N', b.incept_date,
+                  'P', TO_CHAR (:b2502.eff_date, 'DD-MON-YYYY')
+                 ))
+/*end of addition by aldren 02272014*/
+   AND share_type = '2'
+   AND a.line_cd = NVL(:c1306.nbt_line_cd, :b2502.line_cd) 
+/*NVL function added by aldren. Patterned after GIUWS004*/
+   AND b.policy_id = :b2502.policy_id
+UNION
+SELECT a.trty_cd trty_cd, a.trty_name trty_name, a.trty_yy trty_yy,
+       a.line_cd line_cd, a.share_cd share_cd, a.share_type share_type,
+       a.eff_date eff_date, a.expiry_date expiry_date
+  FROM giis_dist_share a,
+       giuw_policyds_dtl b,
+       gipi_polbasic c,
+       giuw_pol_dist d
+ WHERE c.policy_id = d.policy_id
+   AND b.dist_no = d.dist_no
+   AND a.line_cd = c.line_cd
+   AND a.line_cd = b.line_cd
+   AND a.share_cd = b.share_cd
+   AND NVL (a.prtfolio_sw, 'N') = 'N'
+   AND share_type = '2'
+   AND c.line_cd = :b2502.line_cd
+   AND c.subline_cd = :b2502.subline_cd
+   AND c.iss_cd = :b2502.iss_cd
+   AND c.issue_yy = :b2502.issue_yy
+   AND c.pol_seq_no = :b2502.pol_seq_no
+   AND c.renew_no = :b2502.renew_no
+   AND c.endt_seq_no = 0

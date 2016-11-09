@@ -17,10 +17,11 @@ class Validator
     public function execute()
     {
         $result = true;
+
         foreach ($this->validators as $validator) {
-			
+
             if (! $validator->execute($this->data)) {
-				
+
                 $this->addError(
                     $validator->getField(),
                     $validator->getErrorMessage()

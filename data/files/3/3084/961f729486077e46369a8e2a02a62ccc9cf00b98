@@ -1,0 +1,56 @@
+SELECT a.assd_no,
+       f.region_cd,
+       c.ind_grp_cd,
+       a.line_cd,
+  SUM(NVL(e.losses_paid,0)  + NVL(e.expenses_paid,0)) gross_losses_a,
+                   SUM(NVL(e.losses_paid,0)) gross_losses_b,       
+       policy_id, e.claim_id
+  FROM GIAC_ACCTRANS       d,
+       GICL_CLM_RES_HIST   e,
+       GIIS_REGION         f,
+       GIIS_INDUSTRY_GROUP g,
+       (SELECT x.policy_id, x.line_cd,x.subline_cd,x.iss_cd,x.issue_yy,x.pol_seq_no,x.renew_no,z.assd_no,z.claim_id
+          FROM GIPI_POLBASIC x,
+               GIIS_SUBLINE  y,
+               GICL_CLAIMS   z 
+         WHERE 1=1
+           AND x.line_cd    = z.line_cd
+           AND x.line_cd    = y.line_cd
+           AND x.subline_cd = z.subline_cd
+           AND x.subline_cd = y.subline_cd
+           AND x.iss_cd     = z.iss_cd
+           AND x.issue_yy   = z.issue_yy
+           AND x.pol_seq_no = z.pol_seq_no
+           AND x.renew_no   = z.renew_no
+           AND x.subline_cd = y.subline_cd
+           and endt_seq_no  = 0
+           AND nvl(y.micro_sw,'N') <> 'Y'
+           AND x.iss_cd != Giisp.v('ISS_CD_RI')
+           AND x.cred_branch != Giisp.v('ISS_CD_RI')
+           AND x.cred_branch != Giisp.v('ISS_CD_RI')
+           AND ( check_user_per_iss_cd(x.line_cd, x.iss_cd, 'GIPIS203') = 1
+               or check_user_per_iss_cd(x.line_cd, x.cred_branch, 'GIPIS203') = 1 ))a,
+       (SELECT distinct v.region_cd,item_no, j.line_cd,j.subline_cd,j.iss_cd,j.issue_yy,j.pol_seq_no,j.renew_no
+          FROM gipi_item v,
+               gipi_polbasic j
+         WHERE 1=1
+           AND v.policy_id = j.policy_id) h,               
+       GIIS_ASSURED b, GIIS_INDUSTRY c
+ WHERE 1=1
+   AND a.claim_id = e.claim_id
+   AND e.tran_id    = d.tran_id
+   AND e.tran_id IS NOT NULL       
+   AND (d.posting_date >= p_from_date AND d.posting_date <= p_to_date)
+   AND d.tran_flag <> 'D'
+   AND b.industry_cd = c.industry_cd
+   AND c.ind_grp_cd =g.ind_grp_cd
+   and a.assd_no = b.assd_no
+   and h.item_no = e.item_no
+   and h.region_cd = f.region_cd
+           AND h.line_cd    = a.line_cd
+           AND h.subline_cd = a.subline_cd
+           AND h.iss_cd     = a.iss_cd
+           AND h.issue_yy   = a.issue_yy
+           AND h.pol_seq_no = a.pol_seq_no
+           AND h.renew_no   = a.renew_no   
+GROUP BY a.assd_no, f.region_cd, c.ind_grp_cd, a.line_cd, a.policy_id, e.claim_id            

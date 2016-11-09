@@ -1,0 +1,8 @@
+host=smtp.mail.yahoo.com
+port=465
+email=geniisys@cpi.com.ph
+password=60158058614520325400296104254055742540089
+authorization=true
+
+#Timeout in seconds
+timeout=180S

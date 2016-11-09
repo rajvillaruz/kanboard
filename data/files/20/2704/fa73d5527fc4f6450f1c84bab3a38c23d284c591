@@ -1,0 +1,33 @@
+1. Run the following script:
+BEGIN
+   twenty_fourth_validation.extract_all (8, 2014);
+END;
+
+2. To extract records per policy, run the following query:
+    2.a. Gross Premium:
+SELECT *
+  FROM TABLE (twenty_fourth_validation.get_gross_premium_dtl);
+
+    2.b  Premium Ceded - Treaty:
+SELECT *
+  FROM TABLE (twenty_fourth_validation.get_ri_premium_dtl);
+
+    2.c  Premium Ceded - Facultative:
+SELECT *
+  FROM TABLE (twenty_fourth_validation.get_facul_prem_dtl);
+
+    2.d  Commission Income - Treaty:
+SELECT *
+  FROM TABLE (twenty_fourth_validation.get_ri_income1_dtl);
+
+    2.e  Commission Income - Facultative:
+SELECT *
+  FROM TABLE (twenty_fourth_validation.get_ri_income2_dtl);
+
+    2.f   Commission Expense - Direct:
+SELECT *
+  FROM TABLE (twenty_fourth_validation.get_comm_exp_dtl);
+
+    2.g  Commission Expense - Facultative:
+SELECT *
+  FROM TABLE (twenty_fourth_validation.get_comm_exp_ri_dtl);

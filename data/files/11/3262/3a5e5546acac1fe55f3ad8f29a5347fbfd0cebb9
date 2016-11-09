@@ -1,0 +1,96 @@
+--RECAP 1 
+  SELECT rowno,
+         rowtitle,
+         rowcount_func policy_count,
+         ctpl_count_func coc_count,
+         NVL (direct_col, 0) direct_premiums,
+         NVL (ceded_auth, 0) prem_ceded_auth,
+         NVL (ceded_asean, 0) prem_ceded_asean,
+         NVL (ceded_oth, 0) prem_ceded_others,
+         NVL (net_direct, 0) net_direct_prem_written,
+         NVL (inw_auth, 0) assumed_premiums_auth,
+         NVL (inw_asean, 0) assumed_premiums_asean,
+         NVL (inw_oth, 0) assumed_premiums_others,
+         NVL (retced_auth, 0) assumed_prem_ceded_auth,
+         NVL (retced_asean, 0) assumed_prem_ceded_asean,
+         NVL (retced_oth, 0) assumed_prem_ceded_others,
+         NVL (net_written, 0) net_premiums_written,
+         NVL (prev_def_prem_amt, 0) unearned_prem_prev_year,
+         NVL (curr_def_prem_amt, 0) unearned_prem_current_year,
+         NVL (earned_premiums, 0) earned_premiums
+    FROM TABLE (giacr290_pkg.get_giacr290_records ('PREMIUM'))
+ORDER BY rowno, rowtitle;
+--------------------------------------------------------------
+--RECAP 2
+
+SELECT   rowno, rowtitle, rowcount_func "COUNT", NVL (direct_loss, 0) "DIR - LOSS PAID", NVL (direct_exp, 0) "DIR - EXP PAID", 
+         NVL (ceded_auth, 0) "DIR - LOSSES RECOV - AUTH", NVL (ceded_asean, 0)"DIR - LOSSES RECOV - ASEAN", NVL (ceded_oth, 0) "DIR - LOSSES RECOV - OTHERS", 
+         NVL (net_direct_loss, 0) "NET LOSSES PAID - DIRECT",
+         NVL (net_direct_exp, 0) "NET EXPENSES PAID - DIRECT", NVL (inw_auth_loss, 0) "INW - AUTH - LOSSES PAID",
+         NVL (inw_auth_exp, 0) "INW - AUTH - EXPENSES PAID", NVL (inw_asean, 0) "INW - ASEAN - LE PAID", NVL (inw_oth, 0) "INW - OTHERS - LE PAID",
+         NVL (retced_auth, 0) "INW - LOSSES RECOV - AUTH", NVL (retced_asean, 0) "INW - LOSSES RECOV - ASEAN", NVL (retced_oth, 0) "INW - LOSSES RECOV - OTHERS",
+         NVL (net_written_loss, 0) "NET WRITTEN LOSS", NVL (net_written_exp, 0) "NET WRITTEN EXP",
+         NVL (net_osloss_cy, 0) "NET LOSSES UNPAID CY", NVL (net_osexp_cy, 0) "NET EXP UNPAID CY",
+         NVL (net_osloss_py, 0)"NET LOSSES UNPAID PY", NVL (net_osexp_py, 0) "NET EXP UNPAID PY", 
+         NVL (net_lossinc,0) "LOSSES INCURRED",  NVL (net_expinc,0) "EXPENSE INCURRED", 
+         NVL (earned_premiums, 0)"EARNED PREMIUM", NVL(lossratio,0) "LOSS RATIO"
+    FROM TABLE (giacr290_pkg.get_giacr290_records ('LOSSPD'))
+ORDER BY rowno, rowtitle;
+--------------------------------------------------------------
+
+--RECAP 3 
+  SELECT rowno,
+         rowtitle,
+         NVL (direct_col, 0) direct_comm_expense,
+         NVL (ceded_auth, 0) comm_income_auth,
+         NVL (ceded_asean, 0) comm_income_asean,
+         NVL (ceded_oth, 0) comm_income_others,
+         NVL (net_direct, 0) net_direct_comm_expense,
+         NVL (inw_auth, 0) assumed_comm_exp_auth,
+         NVL (inw_asean, 0) assumed_comm_exp_asean,
+         NVL (inw_oth, 0) assumed_comm_exp_others,
+         NVL (retced_auth, 0) assumed_comm_income_auth,
+         NVL (retced_asean, 0) assumed_comm_income_asean,
+         NVL (retced_oth, 0) assumed_comm_income_others,
+         NVL (net_written, 0) net_commission_expense
+    FROM TABLE (giacr290_pkg.get_giacr290_records ('COMM'))
+ORDER BY rowno, rowtitle;
+--------------------------------------------------------------
+
+--RECAP 4 
+  SELECT rowno,
+         rowtitle,
+         NVL (direct_col, 0) direct_tsi,
+         NVL (ceded_auth, 0) tsi_ceded_auth,
+         NVL (ceded_asean, 0) tsi_ceded_asean,
+         NVL (ceded_oth, 0) tsi_ceded_others,
+         NVL (net_direct, 0) net_direct_tsi,
+         NVL (inw_auth, 0) assumed_tsi_auth,
+         NVL (inw_asean, 0) assumed_tsi_asean,
+         NVL (inw_oth, 0) assumed_tsi_others,
+         NVL (retced_auth, 0) assumed_tsi_ceded_auth,
+         NVL (retced_asean, 0) assumed_tsi_ceded_asean,
+         NVL (retced_oth, 0) assumed_tsi_ceded_others,
+         NVL (net_written, 0) net_tsi_written
+    FROM TABLE (giacr290_pkg.get_giacr290_records ('TSI'))
+ORDER BY rowno, rowtitle;
+--------------------------------------------------------------
+
+--RECAP 5 
+  SELECT rowno,
+         rowtitle,
+         rowcount_func policy_count,
+         NVL (direct_col, 0) direct_loss,
+         NVL (ceded_auth, 0) losses_recov_auth,
+         NVL (ceded_asean, 0) losses_recov_asean,
+         NVL (ceded_oth, 0) losses_recov_others,
+         NVL (net_direct, 0) net_direct_losses,
+         NVL (inw_auth, 0) assumed_loss_auth,
+         NVL (inw_asean, 0) assumed_loss_asean,
+         NVL (inw_oth, 0) assumed_loss_others,
+         NVL (retced_auth, 0) assumed_losses_recov_auth,
+         NVL (retced_asean, 0) assumed_losses_recov_asean,
+         NVL (retced_oth, 0) assumed_losses_recov_others,
+         NVL (net_written, 0) net_losses_paid
+    FROM TABLE (giacr290_pkg.get_giacr290_records ('OSLOSS'))
+ORDER BY rowno, rowtitle;

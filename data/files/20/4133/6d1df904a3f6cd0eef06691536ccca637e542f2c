@@ -1,0 +1,12 @@
+/* Formatted on 9/28/2016 3:21:50 PM (QP5 v5.256.13226.35538) */
+BEGIN
+   FOR b IN (  SELECT b.apdc_id, b.user_id
+                 FROM giac_apdc_payt a, giac_apdc_payt_dtl b
+                WHERE a.apdc_id = b.apdc_id AND a.user_id = 'CPI'
+             ORDER BY b.apdc_id, b.last_update)
+   LOOP
+      UPDATE giac_apdc_payt
+         SET user_id = b.user_id
+       WHERE apdc_id = b.apdc_id;
+   END LOOP;
+END;

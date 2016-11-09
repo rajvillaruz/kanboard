@@ -1,0 +1,14 @@
+To auto close claim:
+
+ 1. In Claims, find a claim with final_tag = ‘Y’ (to be used in direct claims payts in direct trans)
+ 2. In Accounting > Cash Receipts >  Enter Transactions > Generate OR
+ 3. Supply all the required fields. Then click Save.
+ 4. Click OR Details, in Direct Trans tab, select Direct Claim Payts then add the claims that you find in No. 1. Click Save.
+ 5. In Accounting Entries make sure that the Total Debit Amount is equal to the Total Credit Amount. If not go to Direct Trans tab then Loss Recoveries, supply all the require fields and enter the amount. Add the Save.
+ 6. In OR Preview supply all the required fields Add then Save.
+Print OR.
+
+To check if the claim is closed:
+
+ 1. Claims > Claims Transaction > Batch Claim Closing.
+ 2. Enter the name of the Assured then OK.

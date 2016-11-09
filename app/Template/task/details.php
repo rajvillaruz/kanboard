@@ -1,4 +1,3 @@
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 <div class="color-<?= $task['color_id'] ?> task-show-details">
     <h2><?= $this->e('#'.$task['id'].' '.$task['title']) ?></h2>
     <?php if ($task['score']): ?>
@@ -109,7 +108,7 @@
 			try {
 					$conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
 					$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-					$stmt = $conn->prepare("SELECT id, cost, activity, client, sr_no FROM tasks WHERE id =". $task['id']);
+					$stmt = $conn->prepare("SELECT id, cost, activity, client FROM tasks WHERE id =". $task['id']);
 					$stmt->execute();
 					
 					$stmt->setFetchMode(PDO::FETCH_OBJ);
@@ -130,8 +129,6 @@
 						echo' Client: '. $row->client;
 						echo'</li>';
 						}
-					
-					//define("KB_SR_ID",$row->sr_no);
 					}
 				}
 			catch(PDOException $e) {

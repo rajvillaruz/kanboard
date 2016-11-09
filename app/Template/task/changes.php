@@ -1,35 +1,33 @@
 <?php if ( empty($changes)): ?>
     <ul>
         <?php
-        
+
 		$cost_list = array('Unassigned' => 'Unassigned',
-								'Maintenance' => 'Maintenance', 
+								'Maintenance' => 'Maintenance',
         						'Development' => 'Development',
 								'Enhancement' => 'Enhancement',
 								'Implementation' => 'Implementation',
 								'Others' => 'Others');
-		
+
 		$activity_list['Unassigned'] = array('Unassigned' => 'Unassigned');
-		
+
 		$activity_list['Maintenance'] = array('Bug Fixing' => 'Bug Fixing',
 											  'Consultation' => 'Consultation');
-											  
+
 		$activity_list['Development'] = array('Internal SR' => 'Internal SR',
 											  'Industry Enhancement' => 'Industry Enhancement');
-											  
+
 		$activity_list['Enhancement'] = array('Specific Enhancement' => 'Specific Enhancement');
-											  
+
 		$activity_list['Implementation'] = array('Configurable Document' => 'Configurable Document',
 											  'GAP Analysis' => 'GAP Analysis',
-											  'Regression' => 'Regression',
-											  'SIT' => 'SIT',
 											  'UAT' => 'UAT',
 											  'UT' => 'UT');
-											  
+
 		$activity_list['Others'] = array('Meetings' => 'Meetings',
 										 'Trainings' => 'Trainings',
 										 'Tech Sessions' => 'Tech Sessions');
-		
+
 		$client_list = array('Unassigned' => 'Unassigned',
 								'UCPB' => 'UCPB',
 								'FGIC' => 'FGIC',
@@ -44,8 +42,9 @@
 								'TPISC' => 'TPISC',
 								'NIA' => 'NIA',
 								'AFPGEN' => 'AFPGEN',
-								'ALLs' => 'ALLs');
-								
+                                'PFIC' => 'PFIC',
+								'ALL' => 'ALL');
+
 
         foreach ($changes as $field => $value) {
 
@@ -77,10 +76,10 @@
                     break;
 				case 'activity':
                     echo '<li>'.t('Activity: %s', $this->text->in($task['activity'], $activity_list[$this->text->in($task['cost'], $cost_list)])).'</li>';
-                    break;	
+                    break;
 				case 'client':
                     echo '<li>'.t('Client: %s', $this->text->in($task['client'], $client_list)).'</li>';
-			
+
 				 break;
                 case 'score':
                     echo '<li>'.t('New complexity: %d', $task['score']).'</li>';
@@ -118,26 +117,21 @@
                         echo '<li>'.dt('Start date changed: %B %e, %Y', $task['date_started']).'</li>';
                     }
                     break;
-				case 'sr_relation':
-                    echo '<li>'.t('Added SR Relation: %s', $changes['sr_relation']).'</li>';
-                break;
-				case 'sr_delete':
-                    echo '<li>'.t('Removed SR Relation: %s', $changes['sr_delete']).'</li>';
-                break;
+
                 default:
                     echo '<li>'.t('The field "%s" have been updated', $field).'</li>';
             }
         }
 
         ?>
-		
+
     </ul>
 
     <?php if (! empty($changes['description'])): ?>
         <p><?= t('The description have been modified') ?></p>
         <div class="markdown"><?= $this->text->markdown($task['description']) ?></div>
     <?php endif ?>
-	
-       
-  
+
+
+
 <?php endif ?>

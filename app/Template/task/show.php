@@ -1,6 +1,6 @@
 <?= $this->render('task/details', array(
     'task' => $task,
-    'project' => $project,
+    'project' => $project,    
     'recurrence_trigger_list' => $this->task->recurrenceTriggers(),
     'recurrence_timeframe_list' => $this->task->recurrenceTimeframes(),
     'recurrence_basedate_list' => $this->task->recurrenceBasedates(),

@@ -1,0 +1,103 @@
+/* Formatted on 2/24/2016 2:23:23 PM (QP5 v5.227.12220.39754) */
+CREATE OR REPLACE PACKAGE BODY CPI.CSV_24TH_METHOD
+AS
+   /* Created by: Mikel 02.24.2016
+   ** Description: To be able to query extracted records per policy that will be used in csv pinting for 24th method.
+   */
+   FUNCTION GIACR045 (p_report_type     VARCHAR2,
+                      p_extract_year    giac_deferred_extract.year%TYPE,
+                      p_extract_mm      giac_deferred_extract.mm%TYPE)
+      RETURN detailed_list_tab
+      PIPELINED
+   IS
+      TYPE cur_typ IS REF CURSOR;
+
+      v_list              detailed_list_type;
+      c                   cur_typ;
+      v_query             VARCHAR2 (2000);
+      p_dtl_table         VARCHAR2 (100);
+      p_amount            VARCHAR2 (100);
+      p_deferred_amount   VARCHAR2 (100);
+   BEGIN
+      csv_24th_method.pop_dynamic_obj (p_report_type,
+                                       p_dtl_table,
+                                       p_amount,
+                                       p_deferred_amount);
+      p_dtl_table := p_dtl_table;
+      v_query :=
+         'SELECT extract_year, extract_mm, iss_cd, line_cd, policy_no,
+                         eff_date, expiry_date, numerator_factor, denominator_factor ';
+      v_query :=
+            v_query
+         || ', '
+         || p_amount
+         || ', '
+         || p_deferred_amount
+         || ' FROM '
+         || p_dtl_table
+         || ' WHERE extract_year = '
+         || p_extract_year
+         || ' AND extract_mm = '
+         || p_extract_mm
+         || 'ORDER BY expiry_date';
+
+      OPEN c FOR v_query;
+
+      LOOP
+         FETCH c
+            INTO v_list.extract_year,
+                 v_list.extract_mm,
+                 v_list.iss_cd,
+                 v_list.line_cd,
+                 v_list.policy_no,
+                 v_list.eff_date,
+                 v_list.expiry_date,
+                 v_list.numerator_factor,
+                 v_list.denominator_factor,
+                 v_list.amount,
+                 v_list.deferred_amount;
+
+         EXIT WHEN c%NOTFOUND;
+         PIPE ROW (v_list);
+      END LOOP;
+
+      CLOSE c;
+   END;
+
+   PROCEDURE pop_dynamic_obj (p_report_type       IN     VARCHAR2,
+                              p_dtl_table         IN OUT VARCHAR2,
+                              p_amount            IN OUT VARCHAR2,
+                              p_deferred_amount   IN OUT VARCHAR2)
+   IS
+   BEGIN
+      IF p_report_type = 'DGP'
+      THEN
+         --table
+         p_dtl_table := 'giac_deferred_gross_prem_pol';
+         --columns
+         p_amount := 'prem_amt';
+         p_deferred_amount := 'def_prem_amt';
+      ELSIF p_report_type = 'DPC'
+      THEN
+         --table
+         p_dtl_table := 'giac_deferred_ri_prem_cede_pol';
+         --columns
+         p_amount := 'dist_prem';
+         p_deferred_amount := 'def_dist_prem';
+      ELSIF p_report_type = 'DCI'
+      THEN
+         --table
+         p_dtl_table := 'giac_deferred_comm_income_pol';
+         --columns
+         p_amount := 'comm_income';
+         p_deferred_amount := 'def_comm_income';
+      ELSIF p_report_type = 'DCE'
+      THEN
+         --table
+         p_dtl_table := 'giac_deferred_comm_expense_pol';
+         --columns
+         p_amount := 'comm_expense';
+         p_deferred_amount := 'def_comm_expense';
+      END IF;
+   END;
+END;

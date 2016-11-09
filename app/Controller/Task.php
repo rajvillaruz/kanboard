@@ -1,7 +1,7 @@
 <?php
 
 namespace Controller;
-use PDO;
+
 /**
  * Task controller
  *
@@ -53,52 +53,8 @@ class Task extends Base
     public function show()
     {
         $task = $this->getTask();
-        $subtasks = $this->subtask->getAll($task['id']);
+        $subtasks = $this->subtask->getAll($task['id']);        
 
-		// Assign the task to a user in MANTIS --- Rochelle Villaruz
-		/* define("MANTIS_SERVERNAME" , "localhost");
-		define("MANTIS_USERNAME" , "root");
-		define("MANTIS_PASSWORD" , "ilovecpi");
-		define("MANTIS_DBNAME" , "_mantis_db"); */
-		$server = 'localhost';
-		$dbname = '_mantis_db';
-		$mantisname = 'root';
-		$mantispass = 'ilovecpi';
-		$mantis_conn = new PDO("mysql:host=".$server.";dbname=".$dbname."", $mantisname, $mantispass);
-		$mantis_conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-		$stmt1 = $mantis_conn->prepare("SELECT bug_id FROM mantis_custom_field_string_table WHERE field_id=23 AND value=" . $task['id']);
-		$stmt1->execute();
-		$stmt1->setFetchMode(PDO::FETCH_OBJ);
-		while ($row = $stmt1->fetch()) {
-			if (!empty($row->bug_id)) {
-				$src_sr = $row->bug_id;
-				$stmt2 = $mantis_conn->prepare("SELECT * FROM mantis_bug_table WHERE id=". $src_sr);
-				$stmt2->execute();
-				$stmt2->setFetchMode(PDO::FETCH_OBJ);
-				while ($row1 = $stmt2->fetch()) {
-					$handler = $row1->handler_id;
-					if (!empty($handler)) {
-						$stmt3 = $mantis_conn->prepare("SELECT * FROM mantis_user_table WHERE id='". $handler."'");
-						$stmt3->execute();
-						$stmt3->setFetchMode(PDO::FETCH_OBJ);
-						while ($row2 = $stmt3->fetch()) {
-							if (!empty($row2->id)) {
-								$username = $row2->username;
-								$user = $this->db->table('users')->eq('username', $username)->findOne();
-								/* $task['owner_id'] = $user['id']; */
-								$this->db->table('tasks')->eq('id', $task['id'])->update(array(
-                                            'owner_id' => $user['id']
-                                        ));
-								/* $stmt4 = $mantis_conn->prepare("UPDATE mantis_bug_table SET handler_id=". $user_id ." WHERE id=" . $src_sr);
-								$stmt4->execute();              
-								$stmt4->setFetchMode(PDO::FETCH_OBJ); */
-							}
-						}
-					}
-				}
-			}
-		}
-		$task = $this->getTask();
         $values = array(
             'id' => $task['id'],
             'date_started' => $task['date_started'],
@@ -128,7 +84,6 @@ class Task extends Base
             'recurrence_timeframe_list' => $this->task->getRecurrenceTimeframeList(),
             'recurrence_basedate_list' => $this->task->getRecurrenceBasedateList(),
         )));
-		
     }
 
     /**

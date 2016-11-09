@@ -1,0 +1,136 @@
+CREATE OR REPLACE PACKAGE BODY CPI.GIPIR311_AFPGEN_PKG
+    AS
+/******************************************************************************
+   NAME:       GIPIR311_AFP_PKG
+   PURPOSE:    Grouped Insurance Confirmation
+
+   REVISIONS:D
+   Ver        Date        Author           Description
+   ---------  ----------  ---------------  ------------------------------------
+   1.0        09/11/2013  Samuel Boquero   Created
+   1.1        11/18/2014  Mark Paragas     Added Currency Short Name in get_peril_details.
+******************************************************************************/
+
+    FUNCTION get_gipir311_details(p_policy_id          GIPI_POLBASIC.policy_id%TYPE,
+                                  p_item_no            GIPI_GROUPED_ITEMS.item_no%TYPE,
+                                  p_grouped_item_no    GIPI_GROUPED_ITEMS.grouped_item_no%TYPE)
+    RETURN gipir311_tab PIPELINED
+
+    IS
+        v_gpa       gipir311_type;
+        v_logo      giis_parameters.param_value_v%TYPE;
+        v_company   giis_parameters.param_value_v%TYPE;
+        v_address   giis_parameters.param_value_v%TYPE;
+        v_tel_no    giis_issource.tel_no%TYPE;
+        v_fax       giis_issource.branch_fax_no%TYPE;
+        v_email     giis_issource.branch_website%TYPE;
+
+    BEGIN
+
+        v_logo      :=  giisp.v('LOGO_FILE');
+        v_company   :=  giisp.v('COMPANY_NAME');
+        v_address   :=  giisp.v('COMPANY_ADDRESS');
+
+        SELECT a.tel_no,
+               a.branch_fax_no,
+               a.branch_website
+          INTO v_tel_no,
+               v_fax,
+               v_email
+          FROM giis_issource a,
+               gipi_polbasic b
+         WHERE b.policy_id = p_policy_id
+           AND a.iss_cd = b.iss_cd;
+
+       FOR i IN (SELECT get_policy_no(a.policy_id) policy_no,
+                        b.grouped_item_no enrollee_no,
+                        b.grouped_item_title enrollee_name,
+                        NVL(b.from_date, a.eff_date) eff_date,
+                        NVL(b.to_date, a.expiry_date) expiry_date, a.iss_cd iss_cd
+                   FROM gipi_polbasic a,
+                        gipi_grouped_items b
+                  WHERE a.policy_id = p_policy_id
+                    AND b.item_no = p_item_no
+                    AND b.policy_id = a.policy_id
+                    AND b.grouped_item_no = p_grouped_item_no)
+       LOOP
+        v_gpa.report_id     := 'GIPIR311';
+        v_gpa.iss_cd        :=  i.iss_cd;
+        v_gpa.logo          :=  v_logo;
+        v_gpa.company       :=  v_company;
+        v_gpa.address       :=  INITCAP(v_address);
+        v_gpa.tel_no        :=  v_tel_no;
+        v_gpa.fax_no        :=  v_fax;
+        v_gpa.email         :=  v_email;
+        v_gpa.policy_no     :=  i.policy_no;
+        v_gpa.enrollee_no   :=  i.enrollee_no;
+        v_gpa.enrollee_name :=  i.enrollee_name;
+        v_gpa.eff_date      :=  TO_CHAR(i.eff_date,'MM/DD/YYYY');
+        v_gpa.expiry_date   :=  TO_CHAR(i.expiry_date,'MM/DD/YYYY');
+        v_gpa.day_printed   :=  TO_CHAR(SYSDATE,'fmddth');
+        v_gpa.month_year    :=  TO_CHAR(SYSDATE, 'fmMonth, YYYY');
+
+        PIPE ROW(v_gpa);
+      END LOOP;
+    END get_gipir311_details;
+
+   FUNCTION get_signatory_details (p_policy_id gipi_polbasic.policy_id%TYPE)
+      RETURN signatory_tab PIPELINED
+   AS
+      v_sign   signatory_type;
+
+   BEGIN
+        FOR i IN(SELECT a.signatory,
+                        a.designation,
+                        a.file_name
+                   FROM giis_signatory_names a,
+                        giis_signatory b,
+                        gipi_polbasic c
+                  WHERE 1=1
+                    AND b.line_cd = c.line_cd
+                    AND b.report_id = 'GIPIR311'
+                    AND b.iss_cd = c.iss_cd
+                    AND a.signatory_id = b.signatory_id
+                    AND b.current_signatory_sw = 'Y'
+                    AND c.policy_id = p_policy_id)
+          LOOP
+             v_sign.file_name := i.file_name;
+             v_sign.signatory := i.signatory;
+             v_sign.designation := INITCAP(i.designation);
+             PIPE ROW (v_sign);
+          END LOOP;
+
+   END get_signatory_details;
+
+  FUNCTION get_peril_details(p_policy_id        GIPI_POLBASIC.policy_id%TYPE,
+                             p_item_no          gipi_itmperil_grouped.item_no%TYPE,
+                             p_grouped_item_no  gipi_itmperil_grouped.grouped_item_no%TYPE)
+    RETURN peril_tab PIPELINED
+
+  IS
+
+  v_peril           peril_type;
+
+  BEGIN
+
+        FOR i IN (SELECT d.short_name, b.amount_coverage tsi_amt
+                    FROM gipi_grouped_items b,
+                         gipi_item c,
+                         giis_currency d
+                   WHERE  b.policy_id = p_policy_id
+                     AND b.item_no = p_item_no
+                     AND b.grouped_item_no = p_grouped_item_no
+                     AND b.policy_id = c.policy_id
+                     AND b.item_no = c.item_no
+                     AND c.currency_cd = d.main_currency_cd
+                  )
+        LOOP
+                v_peril.currency := i.short_name; 
+                v_peril.tsi_amt := TO_CHAR(i.tsi_amt, 'fm999,999,999,990.00');
+                PIPE ROW (v_peril);
+        END LOOP;
+
+  END get_peril_details;
+
+  END GIPIR311_AFPGEN_PKG;
+/

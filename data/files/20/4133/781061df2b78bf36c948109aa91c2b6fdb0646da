@@ -1,0 +1,28 @@
+/* Formatted on 9/28/2016 1:15:08 PM (QP5 v5.256.13226.35538) */
+DECLARE
+   v_user_id   giis_users.user_id%TYPE;
+BEGIN
+   FOR a
+      IN (SELECT a.*,
+                 b.gibr_gfun_fund_cd,
+                 b.gibr_branch_cd,
+                 b.cashier_cd
+            FROM giac_apdc_payt_dtl a, giac_order_of_payts b
+           WHERE     a.gacc_tran_id = b.gacc_tran_id
+                 AND a.user_id = 'CPI'
+                 AND a.check_flag = 'A')
+   LOOP
+      SELECT dcb_user_id
+        INTO v_user_id
+        FROM giac_dcb_users
+       WHERE     gibr_fund_cd = a.gibr_gfun_fund_cd
+             AND gibr_branch_cd = a.gibr_branch_cd
+             AND cashier_cd = a.cashier_cd;
+
+      UPDATE giac_apdc_payt_dtl
+         SET user_id = v_user_id
+       WHERE pdc_id = a.pdc_id;
+      
+      v_user_id := NULL;
+   END LOOP;
+END;

@@ -1,0 +1,92 @@
+/*
+** SR-22855
+*/
+DECLARE
+   v_line_cd       giri_wfrps_ri.line_cd%TYPE       := 'MC';
+   v_frps_yy       giri_wfrps_ri.frps_yy%TYPE       := 16;
+   v_frps_seq_no   giri_wfrps_ri.frps_seq_no%TYPE   := 90;
+BEGIN
+   FOR i IN (SELECT   e.line_cd, e.frps_yy, e.frps_seq_no, e.ri_seq_no,
+                      SUM (  (NVL (e.ri_shr_pct2, e.ri_shr_pct) / 100)
+                           * a.prem_amt
+                          ) ri_prem_amt
+                 FROM giuw_perilds a,
+                      giuw_perilds_dtl b,
+                      giis_dist_share c,
+                      giri_wdistfrps d,
+                      giri_wfrps_ri e
+                WHERE a.dist_no = b.dist_no
+                  AND a.dist_seq_no = b.dist_seq_no
+                  AND a.line_cd = b.line_cd
+                  AND a.peril_cd = b.peril_cd
+                  AND b.line_cd = c.line_cd
+                  AND b.share_cd = c.share_cd
+                  AND c.share_type = '3'
+                  AND a.dist_no = d.dist_no
+                  AND a.dist_seq_no = d.dist_seq_no
+                  AND d.line_cd = e.line_cd
+                  AND d.frps_yy = e.frps_yy
+                  AND d.frps_seq_no = e.frps_seq_no
+                  AND e.line_cd = v_line_cd
+                  AND e.frps_yy = v_frps_yy
+                  AND e.frps_seq_no = v_frps_seq_no
+             GROUP BY e.line_cd, e.frps_yy, e.frps_seq_no, e.ri_seq_no
+             ORDER BY e.line_cd, e.frps_yy, e.frps_seq_no, e.ri_seq_no)
+   LOOP
+      UPDATE giri_wfrps_ri
+         SET ri_prem_amt = i.ri_prem_amt
+       WHERE line_cd = i.line_cd
+         AND frps_yy = i.frps_yy
+         AND frps_seq_no = i.frps_seq_no
+         AND ri_seq_no = i.ri_seq_no;
+   END LOOP;
+
+   FOR i IN (SELECT   e.line_cd, e.frps_yy, e.frps_seq_no, e.ri_seq_no,
+                      b.peril_cd,
+                      ROUND (SUM (  (NVL (e.ri_shr_pct2, e.ri_shr_pct) / 100)
+                                  * a.prem_amt
+                                 ),
+                             2
+                            ) ri_prem_amt
+                 FROM giuw_perilds a,
+                      giuw_perilds_dtl b,
+                      giis_dist_share c,
+                      giri_wdistfrps d,
+                      giri_wfrps_ri e
+                WHERE a.dist_no = b.dist_no
+                  AND a.dist_seq_no = b.dist_seq_no
+                  AND a.line_cd = b.line_cd
+                  AND a.peril_cd = b.peril_cd
+                  AND b.line_cd = c.line_cd
+                  AND b.share_cd = c.share_cd
+                  AND c.share_type = '3'
+                  AND a.dist_no = d.dist_no
+                  AND a.dist_seq_no = d.dist_seq_no
+                  AND d.line_cd = e.line_cd
+                  AND d.frps_yy = e.frps_yy
+                  AND d.frps_seq_no = e.frps_seq_no
+                  AND e.line_cd = v_line_cd
+                  AND e.frps_yy = v_frps_yy
+                  AND e.frps_seq_no = v_frps_seq_no
+             GROUP BY e.line_cd,
+                      e.frps_yy,
+                      e.frps_seq_no,
+                      e.ri_seq_no,
+                      b.peril_cd
+             ORDER BY e.line_cd,
+                      e.frps_yy,
+                      e.frps_seq_no,
+                      e.ri_seq_no,
+                      b.peril_cd)
+   LOOP
+      UPDATE giri_wfrperil
+         SET ri_prem_amt = i.ri_prem_amt
+       WHERE line_cd = i.line_cd
+         AND frps_yy = i.frps_yy
+         AND frps_seq_no = i.frps_seq_no
+         AND ri_seq_no = i.ri_seq_no
+         AND peril_cd = i.peril_cd;
+   END LOOP;
+
+   COMMIT;
+END;

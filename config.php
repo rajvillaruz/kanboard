@@ -34,7 +34,7 @@ define('DB_DRIVER', 'mysql');
 define('DB_USERNAME', 'root');
 
 // Mysql/Postgres password
-define('DB_PASSWORD', 'ilovecpi');
+define('DB_PASSWORD', 'iloveRCM');
 
 // Mysql/Postgres hostname
 define('DB_HOSTNAME', 'localhost');

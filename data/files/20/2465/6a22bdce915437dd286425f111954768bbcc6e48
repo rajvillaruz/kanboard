@@ -1,0 +1,3 @@
+UPDATE giis_dist_share
+   SET share_type = 2
+ WHERE line_cd = 'FI' AND share_cd = 32;

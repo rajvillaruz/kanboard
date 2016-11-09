@@ -1,0 +1,39 @@
+/* Formatted on 2016/04/04 17:05 (Formatter Plus v4.8.8) */
+SET serveroutput on;
+
+DECLARE
+   v_count   NUMBER := 0;
+BEGIN
+   FOR upd IN (SELECT get_ref_no (c.tran_id) reference_no, c.tran_date, a.*
+                 FROM giac_acct_entries a, giac_acctrans c
+                WHERE 1 = 1
+                  AND a.gacc_tran_id = c.tran_id
+                  AND c.tran_flag IN ('O', 'C')
+                  AND a.gl_acct_category = 2
+                  AND gl_control_acct = 1
+                  AND gl_sub_acct_1 = 1
+                  AND gl_sub_acct_2 = 7
+                  AND gl_sub_acct_3 = 1
+                  AND gl_sub_acct_4 = 0
+                  AND TRUNC (tran_date) > '01-jan-2016'
+                  AND EXISTS (SELECT 'x'
+                                FROM giac_comm_payts x
+                               WHERE x.gacc_tran_id = a.gacc_tran_id))
+   LOOP
+      BEGIN
+         UPDATE giac_acct_entries
+            SET gl_acct_id = 925,
+                gl_sub_acct_4 = 2
+          WHERE gacc_tran_id = upd.gacc_tran_id
+            AND gl_acct_id = upd.gl_acct_id
+            AND acct_entry_id = upd.acct_entry_id;
+
+         IF SQL%FOUND
+         THEN
+            v_count := v_count + 1;
+         END IF;
+      END;
+   END LOOP;
+
+   DBMS_OUTPUT.put_line (v_count || ' records updated.');
+END;
