@@ -66,7 +66,43 @@ class Taskcreation extends Base
 
             if ($this->taskCreation->create($values)) {
                 $this->session->flash(t('Task created successfully.'));
+				
+				// Assign the task to a user in MANTIS --- Rochelle Villaruz
+				define("MANTIS_SERVERNAME" , "localhost");
+				define("MANTIS_USERNAME" , "root");
+				define("MANTIS_PASSWORD" , "ilovecpi");
+				define("MANTIS_DBNAME" , "_mantis_db");
+				$mantis_conn = new PDO("mysql:host=".MANTIS_SERVERNAME.";dbname=".MANTIS_DBNAME."", MANTIS_USERNAME, MANTIS_PASSWORD);
+				$mantis_conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+				$stmt1 = $mantis_conn->prepare("SELECT bug_id FROM mantis_custom_field_string_table WHERE field_id=23 AND value=" . $values['id']);
+				$stmt1->execute();
+				$stmt1->setFetchMode(PDO::FETCH_OBJ);
 
+				while ($row = $stmt1->fetch()) {
+					if (!empty($row->bug_id)) {
+						$src_sr = $row->bug_id;
+						$stmt2 = $mantis_conn->prepare("SELECT * FROM mantis_bug_table WHERE id=". $src_sr);
+						$stmt2->execute();
+						$stmt2->setFetchMode(PDO::FETCH_OBJ);
+
+
+						while ($row1 = $stmt2->fetch()) {
+							$user = $this->db->table('users')->eq('id', $values['owner_id'])->findOne();
+							$stmt3 = $mantis_conn->prepare("SELECT * FROM mantis_user_table WHERE username='". $user['username']."'");
+							$stmt3->execute();
+							$stmt3->setFetchMode(PDO::FETCH_OBJ);
+							while ($row2 = $stmt3->fetch()) {
+								if (!empty($row2->id)) {
+									$user_id = $row2->id;
+									$stmt4 = $mantis_conn->prepare("UPDATE mantis_bug_table SET handler_id=". $user_id ." WHERE id=" . $src_sr);
+									$stmt4->execute();              
+									$stmt4->setFetchMode(PDO::FETCH_OBJ);
+								}
+							}
+							
+						}
+					}
+				}
                 if (isset($values['another_task']) && $values['another_task'] == 1) {
                     unset($values['title']);
                     unset($values['description']);

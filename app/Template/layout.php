@@ -38,7 +38,10 @@
     <?php else: ?>
         <header>
             <nav>
-                <h1><?= $this->url->link('K<span>B</span>', 'app', 'index', array(), false, 'logo', t('Dashboard')).' '.$this->e($title) ?>
+				<!--Version Number--Makoy---------------------------------------------------------------!!-->
+				<?php $version = "v1.11"; ?>
+                <h1><?= $this->url->link('K<span>B</span><span style="font-size:12px;font-color:blue">'.$version.'</span>', 'app', 'index', array(), false, 'logo', t('Dashboard')).' '.$this->e($title) ?>
+				
                     <?php if (! empty($description)): ?>
                         <span class="tooltip" title='<?= $this->e($this->text->markdown($description)) ?>'>
                             <i class="fa fa-info-circle"></i>

@@ -1,6 +1,7 @@
 <?php
 
 namespace Model;
+use mysqli;
 
 use Event\TaskEvent;
 
@@ -97,6 +98,58 @@ class TaskPosition extends Base
         $r1 = $this->saveTaskPositions($project_id, $task_id, 0, $original_column_id, $swimlane_id);
         $r2 = $this->saveTaskPositions($project_id, $task_id, $position, $new_column_id, $swimlane_id);
         $this->db->closeTransaction();
+		
+		## Joey Diaz ##
+    	$conn = new mysqli("localhost", "root", "ilovecpi", "kanboard");
+		//$conn = new mysqli(DB_HOSTNAME, DB_USERNAME, DB_PASSWORD, DB_NAME);
+		
+		$sql = "SELECT 
+					name 
+				FROM
+					projects
+				WHERE
+					id = '{$project_id}'
+		";
+		$result = $conn->query($sql);
+		$projects = $result->fetch_array();
+		
+		$sql = "SELECT 
+					title 
+				FROM
+					columns
+				WHERE
+					id = '{$new_column_id}'
+		";
+		$result = $conn->query($sql);
+		$columns = $result->fetch_array();
+		
+		$conn = new mysqli("localhost", "root", "ilovecpi", "_mantis_db");
+		//$conn = new mysqli(DB_HOSTNAME, DB_USERNAME, DB_PASSWORD, _mantis_db);
+		
+		$sql = "SELECT 
+					bug_id 
+				FROM 
+					mantis_custom_field_string_table 
+				WHERE 
+					value = '{$task_id}' 
+					AND 
+					field_id = '23'";
+		$result = $conn->query($sql);
+		$mantis_id = $result->fetch_array();
+
+		if(!empty($mantis_id['bug_id']))
+		{
+			$sql = "UPDATE 
+						mantis_custom_field_string_table 
+					SET 
+						value = '{$columns['title']}'
+					WHERE 
+						field_id = '25'
+						AND
+						bug_id = '{$mantis_id['bug_id']}'
+			";
+			$result = $conn->query($sql);
+		}
 
         return $r1 && $r2;
     }

@@ -334,5 +334,4 @@ class TaskFinder extends Base
     {
         return $this->db->table(Task::TABLE)->eq('id', $task_id)->exists();
     }
-
 }

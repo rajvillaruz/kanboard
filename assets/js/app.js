@@ -185,91 +185,144 @@ Implementation=new Array('Configurable Documents','GAP Analysis','Regression','S
 Others=new Array('Meetings','Trainings','Tech Sessions');
 
 $(function() {
-
+	
     $('div#cost select').change(function(){
-        populateActivity();
+		populateActivity();
     });
-
-	//$('#newClient').change(function(){
-    //    populateNewTask();
-    //});
+	
 	$(document).on('change', "#newCost",function(){
-      populateNewTask();
+		populateNewTask();
     });
-
+	
+	$(document).ready(function (){
+		
+		$('div.confirm_remove_srlink').hide();
+		$('div.blank_err').hide();
+		$('div.exist_err').hide();
+		
+		$('div.btn_remove_srlink').click(function(){
+			var currentId = $(this).attr('id');
+			var x = "div.btn_remove_srlink#" + currentId;
+			var y = "div.confirm_remove_srlink#" + currentId;
+			$(x).hide();
+			$(y).show();
+		});
+		$('div.confirm_remove_srlink').click(function(){
+			var currentId = $(this).attr('id');
+			var x = "div.btn_remove_srlink#" + currentId;
+			var y = "div.confirm_remove_srlink#" + currentId;
+			$(y).hide();
+			$(x).show();
+		});
+    });
+	
+	$('#add_sr_btn').click(function () {
+		
+		textInput = "";
+		$('#sr_id_field').empty();
+		textInput =  $(this).prev('#sr_id_field').val();
+		
+		if($("#sr_id_field").val() == ""){
+			$('.not_exist_err').hide();
+			$('.par_sr_err').hide();
+			$('div.blank_err').fadeIn('normal');
+			$("div.blank_err").delay(500).fadeOut('normal');
+			return false;
+		}
+		else{
+			if(isExist(textInput)){
+				$('.not_exist_err').hide();
+				$('.par_sr_err').hide();
+				$('div.exist_err').fadeIn('normal');
+				$("div.exist_err").delay(500).fadeOut('normal');
+				return false;
+			}
+		}
+	})
 });
+
+var m=false;
+function isExist(strd){
+    m=false;
+    $('tr[id^=sr_row_]').each(function(){
+		var currentId = $(this).attr('id');
+		if(currentId==="sr_row_"+strd) {
+			m=true;            
+        }   
+	})
+	return m;
+}
 
 function populateActivity(){
     taskCost=$('div#cost select').val();
     $('div#activity select').html('');
-
+	
 	if(taskCost=='Unassigned'){
-        Unassigned.forEach(function(t) {
+        Unassigned.forEach(function(t) { 
             $('div#activity select').append('<option>'+t+'</option>');
         });
     }
-
+	
     if(taskCost=='Maintenance'){
-        Maintenance.forEach(function(t) {
+        Maintenance.forEach(function(t) { 
             $('div#activity select').append('<option>'+t+'</option>');
         });
     }
 	if(taskCost=='Development'){
-        Development.forEach(function(t) {
+        Development.forEach(function(t) { 
             $('div#activity select').append('<option>'+t+'</option>');
         });
     }
 	if(taskCost=='Enhancement'){
-        Enhancement.forEach(function(t) {
+        Enhancement.forEach(function(t) { 
             $('div#activity select').append('<option>'+t+'</option>');
         });
     }
 	if(taskCost=='Implementation'){
-        Implementation.forEach(function(t) {
+        Implementation.forEach(function(t) { 
             $('div#activity select').append('<option>'+t+'</option>');
         });
     }
 	if(taskCost=='Others'){
-        Others.forEach(function(t) {
+        Others.forEach(function(t) { 
             $('div#activity select').append('<option>'+t+'</option>');
         });
     }
-}
-
+} 
 
 function populateNewTask(){
     taskCost=$('select.newCost').val();
     $('#newActivity').html('');
-
+	
 	if(taskCost=='Unassigned'){
-        Unassigned.forEach(function(t) {
+        Unassigned.forEach(function(t) { 
             $('#newActivity').append('<option>'+t+'</option>');
         });
     }
-
+	
     if(taskCost=='Maintenance'){
-        Maintenance.forEach(function(t) {
+        Maintenance.forEach(function(t) { 
             $('#newActivity').append('<option>'+t+'</option>');
         });
     }
 	if(taskCost=='Development'){
-        Development.forEach(function(t) {
+        Development.forEach(function(t) { 
             $('#newActivity').append('<option>'+t+'</option>');
         });
     }
 	if(taskCost=='Enhancement'){
-        Enhancement.forEach(function(t) {
+        Enhancement.forEach(function(t) { 
             $('#newActivity').append('<option>'+t+'</option>');
         });
     }
 	if(taskCost=='Implementation'){
-        Implementation.forEach(function(t) {
+        Implementation.forEach(function(t) { 
             $('#newActivity').append('<option>'+t+'</option>');
         });
     }
 	if(taskCost=='Others'){
-        Others.forEach(function(t) {
+        Others.forEach(function(t) { 
             $('#newActivity').append('<option>'+t+'</option>');
         });
     }
-}
+} 

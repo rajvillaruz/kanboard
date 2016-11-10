@@ -2,6 +2,10 @@
 
 namespace Controller;
 
+use SimpleValidator\Validator;
+use SimpleValidator\Validators;
+use PDO;
+
 /**
  * TaskLink controller
  *
@@ -11,6 +15,7 @@ namespace Controller;
  */
 class Tasklink extends Base
 {
+	const TABLE = 'task_has_links';
     /**
      * Get the current link
      *
@@ -68,22 +73,32 @@ class Tasklink extends Base
         $task = $this->getTask();
         $values = $this->request->getValues();
         $ajax = $this->request->isAjax() || $this->request->getIntegerParam('ajax');
+		$db_conn = new PDO("mysql:host=localhost;dbname=kanboard", "root", "ilovecpi");
 
         list($valid, $errors) = $this->taskLink->validateCreation($values);
 
         if ($valid) {
+           $rules = array(
+                       		new Validators\Exists($values['opposite_task_id'], t('ID already a link'), $db_conn, "task_has_links", $key = 'opposite_task_id'),
+                        );
+			$validator = new Validator($values, $rules);
+			list($valid, $error) = array($validator->execute(), $validator->getErrors());
+					$link = $this->db->table(self::TABLE)
+							 ->eq('opposite_task_id', $values['opposite_task_id'])
+							 ->eq('task_id', $values['task_id'])
+							 ->findOne();
+					if (empty($link)) {
+						if ($this->taskLink->create($values['task_id'], $values['opposite_task_id'], $values['link_id'])) {
+							$this->session->flash(t('Link added successfully.'));
 
-            if ($this->taskLink->create($values['task_id'], $values['opposite_task_id'], $values['link_id'])) {
-                $this->session->flash(t('Link added successfully.'));
+							if ($ajax) {
+								$this->response->redirect($this->helper->url->to('board', 'show', array('project_id' => $task['project_id'])));
+							}
 
-                if ($ajax) {
-                    $this->response->redirect($this->helper->url->to('board', 'show', array('project_id' => $task['project_id'])));
-                }
-
-                $this->response->redirect($this->helper->url->to('task', 'show', array('task_id' => $task['id'], 'project_id' => $task['project_id'])).'#links');
-            }
-
-            $errors = array('title' => array(t('The exact same link already exists')));
+							$this->response->redirect($this->helper->url->to('task', 'show', array('task_id' => $task['id'], 'project_id' => $task['project_id'])).'#links');
+						}
+					}
+            $errors = array('title' => array(t('A link between these tasks is already established')));
             $this->session->flashError(t('Unable to create your link.'));
         }
 

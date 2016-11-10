@@ -54,7 +54,6 @@
         <li>
             <?= $this->url->link(t('Move to another project'), 'taskduplication', 'move', array('task_id' => $task['id'], 'project_id' => $task['project_id'])) ?>
         </li>
-        <?php if ($this->task->canClose($task['column_id'])): ?>        
         <li>
             <?php if ($task['is_active'] == 1): ?>
                 <?= $this->url->link(t('Close this task'), 'taskstatus', 'close', array('task_id' => $task['id'], 'project_id' => $task['project_id'])) ?>
@@ -62,7 +61,6 @@
                 <?= $this->url->link(t('Open this task'), 'taskstatus', 'open', array('task_id' => $task['id'], 'project_id' => $task['project_id'])) ?>
             <?php endif ?>
         </li>
-        <?php endif ?>
         <?php if ($this->task->canRemove($task)): ?>
         <li>
             <?= $this->url->link(t('Remove'), 'task', 'remove', array('task_id' => $task['id'], 'project_id' => $task['project_id'])) ?>

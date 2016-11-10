@@ -4,6 +4,7 @@ namespace Model;
 
 use DateTime;
 use DateInterval;
+use mysqli;
 use Event\TaskEvent;
 
 /**
@@ -139,7 +140,7 @@ class TaskDuplication extends Base
         $values['swimlane_id'] = $swimlane_id !== null ? $swimlane_id : $task['swimlane_id'];
         $values['category_id'] = $category_id !== null ? $category_id : $task['category_id'];
         $values['owner_id'] = $owner_id !== null ? $owner_id : $task['owner_id'];
-
+		
         $this->checkDestinationProjectValues($values);
 
         if ($this->db->table(Task::TABLE)->eq('id', $task['id'])->update($values)) {
@@ -148,6 +149,69 @@ class TaskDuplication extends Base
                 new TaskEvent(array_merge($task, $values, array('task_id' => $task['id'])))
             );
         }
+		
+		## Joey ##
+		
+		$conn = new mysqli(DB_HOSTNAME, DB_USERNAME, DB_PASSWORD, DB_NAME);
+		
+		$sql = "SELECT 
+					name 
+				FROM
+					projects
+				WHERE
+					id = '{$values['project_id']}'
+		";
+		$result = $conn->query($sql);
+		$projects = $result->fetch_array();
+		
+		$sql = "SELECT 
+					title 
+				FROM
+					columns
+				WHERE
+					id = '{$values['column_id']}'
+		";
+		$result = $conn->query($sql);
+		$columns = $result->fetch_array();
+		
+		$conn = new mysqli(DB_HOSTNAME, DB_USERNAME, DB_PASSWORD, DB_MANTIS);
+		
+		$sql = "SELECT 
+					bug_id 
+				FROM 
+					mantis_custom_field_string_table 
+				WHERE 
+					value = '{$task_id}' 
+					AND 
+					field_id = '23'";
+		$result = $conn->query($sql);
+		$mantis_id = $result->fetch_array();
+		
+		if(!empty($mantis_id['bug_id']))
+		{
+			$sql = "UPDATE 
+						mantis_custom_field_string_table 
+					SET 
+						value = '{$projects['name']}'
+					WHERE 
+						field_id = '24'
+						AND
+						bug_id = '{$mantis_id['bug_id']}'
+			";
+			$result = $conn->query($sql);
+			
+			$sql = "UPDATE 
+						mantis_custom_field_string_table 
+					SET 
+						value = '{$columns['title']}'
+					WHERE 
+						field_id = '25'
+						AND
+						bug_id = '{$mantis_id['bug_id']}'
+			";
+			$result = $conn->query($sql);
+		}
+		
 
         return true;
     }

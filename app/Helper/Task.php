@@ -34,9 +34,4 @@ class Task extends \Core\Base
     {
         return $this->taskPermission->canRemoveTask($task);
     }
-
-    public function canClose($column_id)
-    {
-        return $this->taskPermission->canCloseTask($column_id);
-    }
 }

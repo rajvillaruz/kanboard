@@ -73,7 +73,6 @@ class Board extends Base
                 'position' => ++$position,
                 'project_id' => $project_id,
                 'task_limit' => $column['task_limit'],
-                'is_task_closable' => $column['is_task_closable'],
                 'description' => $column['description'],
             );
 
@@ -114,13 +113,12 @@ class Board extends Base
      * @param  string    $description   Column description
      * @return boolean|integer
      */
-    public function addColumn($project_id, $title, $task_limit = 0, $description = '', $is_task_closable = 0)
+    public function addColumn($project_id, $title, $task_limit = 0, $description = '')
     {
         $values = array(
             'project_id' => $project_id,
             'title' => $title,
             'task_limit' => intval($task_limit),
-            'is_task_closable' => intval($is_task_closable),
             'position' => $this->getLastColumnPosition($project_id) + 1,
         	'description' => $description,
         );
@@ -138,12 +136,11 @@ class Board extends Base
      * @param  string    $description   Optional description
      * @return boolean
      */
-    public function updateColumn($column_id, $title, $task_limit = 0, $description = '', $is_task_closable = 0)
+    public function updateColumn($column_id, $title, $task_limit = 0, $description = '')
     {
         return $this->db->table(self::TABLE)->eq('id', $column_id)->update(array(
             'title' => $title,
             'task_limit' => intval($task_limit),
-            'is_task_closable' => intval($is_task_closable),
             'description' => $description,
         ));
     }

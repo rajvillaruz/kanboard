@@ -29,15 +29,4 @@ class TaskPermission extends Base
 
         return false;
     }
-
-    public function canCloseTask($column_id)
-    {
-        $column = $this->board->getColumn($column_id);
-
-        if ($column['is_task_closable'] == 1) {
-            return true;
-        }
-
-        return false;
-    }
 }
