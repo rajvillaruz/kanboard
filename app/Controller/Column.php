@@ -24,6 +24,7 @@ class Column extends Base
             $values['title['.$column['id'].']'] = $column['title'];
             $values['description['.$column['id'].']'] = $column['description'];
             $values['task_limit['.$column['id'].']'] = $column['task_limit'] ?: null;
+            $values['is_task_closable['.$column['id'].']'] = $column['is_task_closable'] ?: 0;
         }
 
         $this->response->html($this->projectLayout('column/index', array(
@@ -55,7 +56,7 @@ class Column extends Base
 
         if ($valid) {
 
-            if ($this->board->addColumn($project['id'], $data['title'], $data['task_limit'], $data['description'])) {
+            if ($this->board->addColumn($project['id'], $data['title'], $data['task_limit'], $data['description'], $data['is_task_closable'])) {
                 $this->session->flash(t('Board updated successfully.'));
                 $this->response->redirect($this->helper->url->to('column', 'index', array('project_id' => $project['id'])));
             }
@@ -100,7 +101,7 @@ class Column extends Base
 
         if ($valid) {
 
-            if ($this->board->updateColumn($values['id'], $values['title'], $values['task_limit'], $values['description'])) {
+            if ($this->board->updateColumn($values['id'], $values['title'], $values['task_limit'], $values['description'], $values['is_task_closable'])) {
                 $this->session->flash(t('Board updated successfully.'));
                 $this->response->redirect($this->helper->url->to('column', 'index', array('project_id' => $project['id'])));
             }

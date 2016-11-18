@@ -190,6 +190,9 @@ $(function() {
 		populateActivity();
     });
 	
+	//$('#newClient').change(function(){
+    //    populateNewTask();
+    //});
 	$(document).on('change', "#newCost",function(){
 		populateNewTask();
     });
@@ -289,6 +292,7 @@ function populateActivity(){
         });
     }
 } 
+
 
 function populateNewTask(){
     taskCost=$('select.newCost').val();

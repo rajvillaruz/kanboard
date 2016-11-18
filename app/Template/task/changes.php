@@ -44,7 +44,8 @@
 								'TPISC' => 'TPISC',
 								'NIA' => 'NIA',
 								'AFPGEN' => 'AFPGEN',
-								'ALLs' => 'ALLs');
+                                                                'PFIC' => 'PFIC',
+								'ALL' => 'ALL');
 								
 
         foreach ($changes as $field => $value) {

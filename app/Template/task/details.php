@@ -130,8 +130,6 @@
 						echo' Client: '. $row->client;
 						echo'</li>';
 						}
-					
-					//define("KB_SR_ID",$row->sr_no);
 					}
 				}
 			catch(PDOException $e) {

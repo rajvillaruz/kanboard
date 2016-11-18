@@ -9,7 +9,10 @@
             <li><i class="fa fa-comment-o"></i> <?= $this->url->link(t('Add a comment'), 'comment', 'create', array('task_id' => $task['id'], 'project_id' => $task['project_id']), false, 'task-board-popover') ?></li>
             <li><i class="fa fa-code-fork"></i> <?= $this->url->link(t('Add a link'), 'tasklink', 'create', array('task_id' => $task['id'], 'project_id' => $task['project_id']), false, 'task-board-popover') ?></li>
             <li><i class="fa fa-camera"></i> <?= $this->url->link(t('Add a screenshot'), 'board', 'screenshot', array('task_id' => $task['id'], 'project_id' => $task['project_id']), false, 'task-board-popover') ?></li>
-            <li><i class="fa fa-close"></i> <?= $this->url->link(t('Close this task'), 'taskstatus', 'close', array('task_id' => $task['id'], 'project_id' => $task['project_id'], 'redirect' => 'board'), false, 'task-board-popover') ?></li>
+            <?php if ($this->task->canClose($task['column_id'])): ?> 
+            <li><i class="fa fa-close"></i> <?= $this->url->link(t('Close this task'), 'taskstatus', 'close', array('task_id' => $task['id'], 'project_id' => $task['project_id'], 'redirect' => 'board'), false, 'task-board-popover') ?>
+            </li>
+            <?php endif ?>
         </ul>
     </span>
 </span>

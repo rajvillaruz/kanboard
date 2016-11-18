@@ -135,4 +135,9 @@ class Task extends Base
 
         return $tasks;
     }
+
+    public function countByColumnId($project_id, $column_id)
+    {
+        return $this->taskFinder->countByColumnId($project_id, $column_id);
+}
 }

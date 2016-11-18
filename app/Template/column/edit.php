@@ -15,6 +15,8 @@
     <?= $this->form->label(t('Task limit'), 'task_limit') ?>
     <?= $this->form->number('task_limit', $values, $errors) ?>
 
+    <?= $this->form->checkbox('is_task_closable', t('Tasks are closable in this column'), 1, $values['is_task_closable'] == 1) ?>
+
     <?= $this->form->label(t('Description'), 'description') ?>
 
     <div class="form-tabs">

@@ -22,7 +22,6 @@ class TaskLink extends Base
      */
     const TABLE = 'task_has_links';
 
-
     /**
      * Get a task link
      *
@@ -85,8 +84,6 @@ class TaskLink extends Base
 					$stmt2 = $mantis_conn->prepare("SELECT * FROM `mantis_bug_relationship_table` WHERE source_bug_id=". $src_sr);
 					$stmt2->execute();
 					$stmt2->setFetchMode(PDO::FETCH_OBJ);
-
-
 					while ($row1 = $stmt2->fetch()) {
 						$des_bug_id = $row1->destination_bug_id;
                         $rel_mantis = $row1->relationship_type;

@@ -8,7 +8,7 @@
 		</script>
 
 <div class="page-header">
-    <h2><?= t('Edit a task') ?></h2>
+    <h2><?= t('Edit a Task') ?></h2>
 </div>
 <section id="task-section">
 <form method="post" action="<?= $this->url->href('taskmodification', 'update', array('task_id' => $task['id'], 'project_id' => $task['project_id'], 'ajax' => $ajax)) ?>" autocomplete="off">
@@ -73,7 +73,7 @@
 			$activity_list['Unassigned'] = array('Unassigned' => 'Unassigned');
 			
 			$activity_list['Maintenance'] = array('Bug Fixing' => 'Bug Fixing',
-											  'Consultations' => 'Consultations');
+											  'Consultation' => 'Consultation');
 											  
 			$activity_list['Development'] = array('Internal SR' => 'Internal SR',
 											  'Industry Enhancement' => 'Industry Enhancement');
@@ -92,21 +92,22 @@
 										 'Tech Sessions' => 'Tech Sessions');
 							
 			$client_list = array('Unassigned' => 'Unassigned',
-								'UCPB' => 'UCPB',
-								'FGIC' => 'FGIC',
-								'PHILFIRE' => 'PHILFIRE',
-								'RSIC' => 'RSIC',
-								'MAC' => 'MAC',
-								'AUI' => 'AUI',
-								'CIC/PNG' => 'CIC/PNG',
-								'PNBGEN' => 'PNBGEN',
-								'FLT PRIME' => 'FLT PRIME',
-								'CPAIC' => 'CPAIC',
-								'TPISC' => 'TPISC',
-								'NIA' => 'NIA',
-								'AFPGEN' => 'AFPGEN',
-								'PFIC' => 'PFIC',
-								'ALL' => 'ALL');
+                                'ALL' => 'ALL',
+                                'AFPGEN' => 'AFPGEN',
+				'AUI' => 'AUI',
+				'CIC/PNG' => 'CIC/PNG',
+                                'CPAIC' => 'CPAIC',
+                                'FGIC' => 'FGIC',
+				'FLT PRIME' => 'FLT PRIME',
+                                'MAC' => 'MAC',
+				'NIA' => 'NIA',
+				'PFIC' => 'PFIC',
+                                'PHILFIRE' => 'PHILFIRE',
+                                'PNBGEN' => 'PNBGEN',
+                                'RSIC' => 'RSIC',
+                                'TPISC' => 'TPISC',
+				'UCPB' => 'UCPB'
+			);
 		
 			function enhancement($post)
 			{
@@ -133,9 +134,9 @@
         
 		<?= $this->form->label(t('Cost Center'), 'cost') ?>
 		<div id='cost'><?= $this->form->select('cost', $cost_list, $values, $errors, array('tabindex="4"')) ?> <br/></div>
+
 		<?= $this->form->label(t('Activity'), 'activity') ?>
-		<input type="text" id="costcntr">
-        <div id='activity'><?= $this->form->select('activity', $activity_list[$values['cost']], $values, $errors, array('tabindex="4"')) ?> <br/></div>
+        <div id='activity'><?= $this->form->select('activity', $activity_list[$values['cost']], $values, $errors, array('tabindex="6"')) ?> <br/></div>
         
         <?= $this->form->label(t('Client'), 'client') ?>
         <div id='client'><?= $this->form->select('client', $client_list, $values, $errors, array('tabindex="4"')) ?> <br/></div>

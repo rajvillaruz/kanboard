@@ -128,7 +128,6 @@ class Task extends Base
             'recurrence_timeframe_list' => $this->task->getRecurrenceTimeframeList(),
             'recurrence_basedate_list' => $this->task->getRecurrenceBasedateList(),
         )));
-		
     }
 
     /**
